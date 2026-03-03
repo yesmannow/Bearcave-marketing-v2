@@ -1,0 +1,365 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <script>
+      // Patch to silence duplicate custom element definition errors (e.g., from extensions/TinyMCE)
+      const originalDefine = customElements.define;
+      customElements.define = function(name, constructor, options) {
+        if (customElements.get(name)) {
+          console.warn(`Silencing duplicate registration for custom element: ${name}`);
+          return;
+        }
+        originalDefine.call(this, name, constructor, options);
+      };
+    </script>
+
+    <!-- Theme Init - Zero-FOUC theme loading -->
+    <script>
+      (function() {
+        'use strict';
+        try {
+          const ls = localStorage.getItem('theme'); // 'light' | 'dark' | 'system'
+          const brand = localStorage.getItem('brand') || 'cmo'; // default: cmo
+          const prefersDark = globalThis.matchMedia('(prefers-color-scheme: dark)').matches;
+          let theme;
+          if (ls === 'system' || !ls) {
+            theme = prefersDark ? 'dark' : 'light';
+          } else {
+            theme = ls;
+          }
+          const isDark = theme === 'dark';
+
+          document.documentElement.classList.toggle('dark', isDark);
+          document.documentElement.setAttribute('data-brand', brand);
+
+          // Update theme-color meta tag immediately (for Chrome/Edge/Safari)
+          // Firefox and Opera ignore this tag - we use CSS color-scheme for them instead
+          const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+          if (themeColorMeta) {
+            themeColorMeta.setAttribute('content', isDark ? '#0b0b0c' : '#ffffff');
+          }
+
+          // Set CSS color-scheme for Firefox/Opera support
+          document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
+        } catch(e) {
+          // Silently fail if localStorage is unavailable
+        }
+      })();
+    </script>
+
+    <!-- Primary Meta Tags -->
+    <title>Jacob Darling | Fractional CMO & Marketing Technologist</title>
+    <meta name="title" content="Jacob Darling | Fractional CMO & Marketing Technologist" />
+    <meta name="description" content="16+ years of experience blending creative strategy, marketing automation, and systems thinking to drive scalable growth. Explore full-funnel campaigns, CRM architecture, and performance marketing across SaaS, healthcare, and more." />
+    <meta name="keywords" content="fractional CMO, marketing technologist, marketing strategist, marketing automation, CRM campaigns, systems architecture, growth marketing, performance marketing, Indianapolis marketing, marketing consultant, SaaS marketing, healthcare marketing" />
+    <meta name="author" content="Jacob Darling" />
+    <meta name="robots" content="index, follow" />
+    <meta name="language" content="English" />
+    <meta name="revisit-after" content="7 days" />
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="msapplication-TileColor" content="#0b0b0c" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://mem-rebuild-pl.pages.dev/" />
+    <meta property="og:title" content="Jacob Darling | Fractional CMO & Marketing Technologist" />
+    <meta property="og:description" content="16+ years of experience blending creative strategy, marketing automation, and systems thinking to drive scalable growth. Explore full-funnel campaigns, CRM architecture, and performance marketing across SaaS, healthcare, and more." />
+    <meta property="og:image" content="https://mem-rebuild-pl.pages.dev/og/home.svg" />
+    <meta property="og:site_name" content="Jacob Darling Portfolio" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://mem-rebuild-pl.pages.dev/" />
+    <meta name="twitter:title" content="Jacob Darling | Fractional CMO & Marketing Technologist" />
+    <meta name="twitter:description" content="16+ years of experience blending creative strategy, marketing automation, and systems thinking to drive scalable growth." />
+    <meta name="twitter:image" content="https://mem-rebuild-pl.pages.dev/og/home.svg" />
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://mem-rebuild-pl.pages.dev/" />
+
+    <!-- Resource Hints - Preconnect for faster font loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+
+    <!-- Preconnect to external APIs -->
+    <link rel="preconnect" href="https://www.google-analytics.com">
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com">
+
+    <!-- Fonts with display=swap for better performance - Ocean Pearl Theme -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Fira+Code:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Preload critical assets -->
+    <!-- Note: Only preload resources that are used immediately on page load -->
+    <!-- Video preload removed - let browser handle video loading -->
+    <!-- Image preloads removed - images are loaded when components render -->
+
+    <!-- Favicon (handled by manifest / platform defaults in this build) -->
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Jacob Darling",
+      "jobTitle": "Fractional CMO & Marketing Technologist",
+      "url": "https://mem-rebuild-pl.pages.dev/",
+      "email": "mailto:jacob@jacobdarling.com",
+      "image": "https://mem-rebuild-pl.pages.dev/og/home.svg",
+      "sameAs": [
+        "https://linkedin.com/in/jacobdarling",
+        "https://github.com/JdarlingGT"
+      ],
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Indianapolis",
+        "addressRegion": "IN",
+        "addressCountry": "US"
+      },
+      "description": "16+ years of experience blending creative strategy, marketing automation, and systems thinking to drive scalable growth across SaaS, healthcare, and more.",
+      "knowsAbout": [
+        "Fractional CMO",
+        "Marketing Automation",
+        "CRM Systems",
+        "Performance Marketing",
+        "Marketing Technology",
+        "Growth Marketing",
+        "Analytics",
+        "Conversion Optimization",
+        "SaaS Marketing",
+        "Healthcare Marketing",
+        "Lead Generation",
+        "Marketing Strategy"
+      ],
+      "alumniOf": {
+        "@type": "Organization",
+        "name": "Marketing & Technology Professional"
+      }
+    }
+    </script>
+
+    <!-- Vite will inject modulepreload links for built assets during build -->
+    <!-- Critical CSS is inlined in the build output -->
+    <script type="module" crossorigin src="/assets/main-DxxR8Ybv.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/react-vendor-oFbvCjSM.js">
+    <link rel="modulepreload" crossorigin href="/assets/vendor-router-Ijc_3e2o.js">
+    <link rel="modulepreload" crossorigin href="/assets/vendor-animation-BS-HJUcW.js">
+    <link rel="modulepreload" crossorigin href="/assets/vendor-icons-DBI1lxTb.js">
+    <link rel="modulepreload" crossorigin href="/assets/vendor-utils-BNe0Xlio.js">
+    <link rel="modulepreload" crossorigin href="/assets/vendor-scroll-nPR-7Drn.js">
+    <link rel="stylesheet" crossorigin href="/assets/vendor-scroll-D2oTg1Kg.css">
+    <link rel="stylesheet" crossorigin href="/assets/main--sYTec_P.css">
+  <link rel="manifest" href="/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/registerSW.js"></script></head>
+  <body>
+    <div id="root">
+      <div class="initial-loader">
+        <div class="initial-loader-content">
+          <div class="spinner"></div>
+          <p class="initial-loader-text">Loading portfolio...</p>
+        </div>
+      </div>
+    </div>
+    <noscript>
+      <div class="noscript-message">
+        <div>
+          <h1>JavaScript Required</h1>
+          <p>This portfolio requires JavaScript to function. Please enable JavaScript in your browser settings.</p>
+        </div>
+      </div>
+    </noscript>
+    <!-- Vite will automatically inject the correct entry script during build -->
+
+
+    <!-- Enhanced error detection for production -->
+    <script>
+      // Enhanced error detection to help diagnose loading issues
+      window.addEventListener('error', function(e) {
+        if (!e) return;
+
+        // Aggressively suppress TinyMCE custom element errors (from Vite overlay or browser extensions)
+        const message = e.message || '';
+        const filename = e.filename || '';
+
+        if (
+          message.includes('mce-autosize-textarea') ||
+          filename.includes('webcomponents-ce.js') ||
+          filename.includes('chrome-extension://') ||
+          filename.includes('moz-extension://') ||
+          (message.includes('has already been defined') && filename.includes('overlay_bundle.js'))
+        ) {
+          // Silently ignore TinyMCE/Vite overlay/browser extension errors
+          e.preventDefault();
+          e.stopPropagation();
+          return false;
+        }
+
+        // Only log errors with meaningful information
+        if (!e.message && !e.filename && !e.error) {
+          // Skip logging undefined errors
+          return;
+        }
+
+        console.error('Global error caught:', {
+          message: e.message,
+          filename: e.filename,
+          lineno: e.lineno,
+          colno: e.colno,
+          error: e.error
+        });
+
+        // If it's a module loading error, show helpful message
+        if (e.message && (e.message.includes('Failed to fetch') ||
+                          e.message.includes('module script') ||
+                          e.message.includes('MIME type') ||
+                          e.message.includes('net::ERR'))) {
+          const root = document.getElementById('root');
+          if (root && root.querySelector('.initial-loader')) {
+            root.innerHTML = `
+              <style>
+                .error-container {
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  min-height: 100vh;
+                  background: #0A0A0A;
+                  color: #FFFFFF;
+                  padding: 2rem;
+                  text-align: center;
+                }
+                .error-title {
+                  font-size: 1.5rem;
+                  margin-bottom: 1rem;
+                  color: #EF4444;
+                }
+                .error-message {
+                  opacity: 0.8;
+                  margin-bottom: 1rem;
+                  font-family: monospace;
+                  font-size: 0.9rem;
+                }
+                .error-button {
+                  margin-top: 1rem;
+                  padding: 0.75rem 2rem;
+                  background: #3B82F6;
+                  color: white;
+                  border: none;
+                  border-radius: 8px;
+                  cursor: pointer;
+                }
+              </style>
+              <div class="error-container">
+                <div>
+                  <h2 class="error-title">Script Loading Error</h2>
+                  <p class="error-message">${e.message}</p>
+                  <p style="opacity: 0.7; margin-top: 1rem;">
+                    The application scripts failed to load. This might be a network issue or a build configuration problem.
+                  </p>
+                  <button class="error-button" onclick="window.location.reload()">
+                    Reload Page
+                  </button>
+                </div>
+              </div>
+            `;
+          }
+        }
+      }, true);
+
+      // Also catch unhandled promise rejections
+      window.addEventListener('unhandledrejection', function(e) {
+        // Aggressively suppress TinyMCE custom element errors
+        const reason = String(e.reason || '');
+        if (
+          reason.includes('mce-autosize-textarea') ||
+          reason.includes('mce-') ||
+          reason.includes('has already been defined') ||
+          reason.includes('has already been used') ||
+          reason.includes('webcomponents-ce') ||
+          reason.includes('overlay_bundle')
+        ) {
+          e.preventDefault();
+          e.stopPropagation();
+          return;
+        }
+        console.error('Unhandled promise rejection:', e.reason);
+      });
+
+      // Timeout to detect if nothing loads after 15 seconds
+      setTimeout(function() {
+        const root = document.getElementById('root');
+        if (root && root.querySelector('.initial-loader')) {
+          console.error('Application failed to load after 15 seconds');
+          root.innerHTML = `
+            <style>
+              .timeout-container {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 100vh;
+                background: #0A0A0A;
+                color: #FFFFFF;
+                padding: 2rem;
+                text-align: center;
+              }
+              .timeout-title {
+                font-size: 1.5rem;
+                margin-bottom: 1rem;
+                color: #F59E0B;
+              }
+              .timeout-button {
+                margin-top: 1rem;
+                padding: 0.75rem 2rem;
+                background: #3B82F6;
+                color: white;, its my portfolio and right now this site does not aling with my work and is imbaris/ing ,
+
+                border: none;
+                border-radius: 8px;
+                cursor: pointer;
+              }
+            </style>
+            <div class="timeout-container">
+              <div>
+                <h2 class="timeout-title">Loading Timeout</h2>
+                <p style="opacity: 0.8; margin-bottom: 1rem;">
+                  The application is taking longer than expected to load.
+                </p>
+                <p style="opacity: 0.6; font-size: 0.9rem; margin-bottom: 1rem;">
+                  Please check the browser console (F12) for errors.
+                </p>
+                <button class="timeout-button" onclick="window.location.reload()">
+                  Reload Page
+                </button>
+              </div>
+            </div>
+          `;
+        }
+      }, 15000);
+    </script>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Jacob Darling's professional marketing portfolio showcasing skills, experience, and projects." />
+    <meta name="keywords" content="marketing, portfolio, Jacob Darling, creative technologist, projects, experience" />
+    <meta property="og:title" content="Jacob Darling - Marketing Portfolio" />
+    <meta property="og:description" content="Explore Jacob Darling's professional marketing portfolio." />
+    <meta property="og:image" content="/path-to-image.jpg" />
+    <meta property="og:url" content="https://jacobdarling.com" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=GA_TRACKING_ID"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag('js', new Date());
+      gtag('config', 'GA_TRACKING_ID');
+    </script>
+  </body>
+</html>
+<script async data-explicit-opt-in="true" data-deployment-id="dpl_2e4oWYefzBWUfXpCSc6ACyLbj6aM" src="https://vercel.live/_next-live/feedback/feedback.js"></script>
