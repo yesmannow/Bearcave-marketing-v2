@@ -143,7 +143,7 @@ export const TIMELINE: TimelineEntry[] = [
     location: "Cambridge, UK",
     duration: "2015 — 2019",
     description:
-      "Dual-focus programme bridging technical systems thinking with business strategy. Graduated with First Class Honours.",
+      "Dual-focus program bridging technical systems thinking with business strategy. Graduated with First Class Honours.",
     highlights: [
       { text: "First Class Honours", type: "strategy" },
       { text: "Thesis: Algorithmic Attribution in Digital Media", type: "systems" },

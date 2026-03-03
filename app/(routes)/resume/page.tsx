@@ -33,20 +33,23 @@ function useTypewriter(text: string, speed = 28, delay = 0) {
 
   useEffect(() => {
     let i = 0;
+    let intervalId: ReturnType<typeof setInterval>;
     setDisplayed("");
     setDone(false);
     const t = setTimeout(() => {
-      const id = setInterval(() => {
+      intervalId = setInterval(() => {
         i++;
         setDisplayed(text.slice(0, i));
         if (i >= text.length) {
-          clearInterval(id);
+          clearInterval(intervalId);
           setDone(true);
         }
       }, speed);
-      return () => clearInterval(id);
     }, delay);
-    return () => clearTimeout(t);
+    return () => {
+      clearTimeout(t);
+      clearInterval(intervalId);
+    };
   }, [text, speed, delay]);
 
   return { displayed, done };
@@ -272,13 +275,14 @@ function KPIRibbon() {
     <section className="border-b" style={{ borderColor: "#1e293b", background: "#080f1e" }}>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-px" style={{ background: "#1e293b" }}>
         {KPI_STATS.map((stat, i) => (
-          <div
+          <button
             key={i}
-            className="relative group cursor-pointer px-8 py-10 flex flex-col gap-3"
+            className="relative group cursor-pointer px-8 py-10 flex flex-col gap-3 text-left"
             style={{ background: "#080f1e" }}
             onMouseEnter={() => setTooltip(i)}
             onMouseLeave={() => setTooltip(null)}
             onClick={() => router.push(stat.evidenceLink)}
+            aria-label={`${stat.value} ${stat.label} — view case study`}
           >
             <p
               className="font-black leading-none"
@@ -339,7 +343,7 @@ function KPIRibbon() {
                 background: `linear-gradient(135deg, ${TEAL}08 0%, transparent 60%)`,
               }}
             />
-          </div>
+          </button>
         ))}
       </div>
     </section>
@@ -570,7 +574,7 @@ function DualLensTimeline() {
                 { label: "Growth Strategy", level: 95 },
                 { label: "Technical SEO", level: 90 },
                 { label: "TypeScript / Next.js", level: 92 },
-                { label: "Conversion Optimisation", level: 96 },
+                { label: "Conversion Optimization", level: 96 },
                 { label: "Brand Strategy", level: 88 },
               ].map(({ label, level }) => (
                 <div key={label}>
