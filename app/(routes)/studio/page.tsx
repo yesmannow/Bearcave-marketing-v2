@@ -5,29 +5,27 @@ import { type MotionValue, motion, useScroll, useTransform } from "framer-motion
 import DigitalLoupe from "@/app/components/DigitalLoupe";
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Gallery data
+// Studio assets — branding artifacts
 // ─────────────────────────────────────────────────────────────────────────────
 
-type GalleryItem = {
+type StudioAsset = {
   id: number;
-  title: string;
-  category: string;
-  year: string;
   aspect: "landscape" | "portrait" | "square";
   color: string;
   accent: string;
 };
 
-const GALLERY_ITEMS: GalleryItem[] = [
-  { id: 1, title: "Dark Luxury Rebrand",    category: "Brand Identity",    year: "2025", aspect: "landscape", color: "#0a0a0a", accent: "#00F2FF" },
-  { id: 2, title: "Executive Campaign",     category: "Campaign Direction", year: "2025", aspect: "portrait",  color: "#050a0a", accent: "#00bcd4" },
-  { id: 3, title: "Systems Interface",      category: "UI Design",          year: "2024", aspect: "landscape", color: "#040404", accent: "#00F2FF" },
-  { id: 4, title: "Typographic Manifesto",  category: "Print / Motion",     year: "2024", aspect: "square",    color: "#080808", accent: "#00bcd4" },
-  { id: 5, title: "Digital Twilight",       category: "Photography",        year: "2025", aspect: "portrait",  color: "#020606", accent: "#00F2FF" },
-  { id: 6, title: "Authority Poster Series",category: "Visual Identity",    year: "2025", aspect: "square",    color: "#060606", accent: "#00bcd4" },
+const studioAssets: StudioAsset[] = [
+  { id: 1, aspect: "landscape", color: "#0a0805", accent: "#FF4500" },  // Taconinja
+  { id: 2, aspect: "square",    color: "#0a0504", accent: "#D4380D" },  // 317 BBQ
+  { id: 3, aspect: "portrait",  color: "#050a04", accent: "#7CB518" },  // Herb's Rub
+  { id: 4, aspect: "landscape", color: "#04050a", accent: "#00F2FF" },  // Circle City Kicks
 ];
 
-const ASPECT_DIMS: Record<GalleryItem["aspect"], { w: string; h: string }> = {
+// Keep alias so GalleryTrack can use the same name
+const GALLERY_ITEMS = studioAssets;
+
+const ASPECT_DIMS: Record<StudioAsset["aspect"], { w: string; h: string }> = {
   landscape: { w: "w-80 md:w-[480px]", h: "h-52 md:h-72"    },
   portrait:  { w: "w-52 md:w-72",      h: "h-72 md:h-[440px]" },
   square:    { w: "w-64 md:w-80",       h: "h-64 md:h-80"    },
@@ -73,16 +71,6 @@ function GalleryTrack({ motionX }: { motionX: MotionValue<string> }) {
               >
                 {String(item.id).padStart(2, "0")}
               </span>
-              {/* Hover reveal */}
-              <div className="absolute inset-0 bg-black/65 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-start justify-end p-6 pointer-events-none">
-                <p
-                  className="text-[10px] tracking-[0.3em] uppercase mb-2"
-                  style={{ color: item.accent }}
-                >
-                  {item.category} · {item.year}
-                </p>
-                <h3 className="font-serif text-lg font-bold">{item.title}</h3>
-              </div>
             </div>
           </div>
         );
@@ -182,6 +170,20 @@ export default function StudioPage() {
             className="absolute inset-y-0 right-0 w-24 z-10 pointer-events-none"
             style={{ background: "linear-gradient(270deg, black, transparent)" }}
           />
+
+          {/* ARTIFACTS — mix-blend-difference background word */}
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 flex items-center justify-center pointer-events-none z-0"
+            style={{ mixBlendMode: "difference" }}
+          >
+            <span
+              className="font-serif font-black select-none whitespace-nowrap"
+              style={{ fontSize: "clamp(5rem, 16vw, 18rem)", color: "#ffffff", opacity: 0.07, letterSpacing: "0.05em" }}
+            >
+              ARTIFACTS
+            </span>
+          </div>
 
           {/* ── Original gallery track (always visible) ── */}
           <GalleryTrack motionX={trackX} />
