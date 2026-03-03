@@ -35,7 +35,7 @@ export default function LabIndexPage() {
   return (
     <div className="min-h-screen px-6 md:px-12 py-16">
       <div className="mb-16">
-        <p className="text-[#22d3ee] text-xs tracking-[0.3em] uppercase mb-4">
+        <p className="text-[#00F2FF] text-xs tracking-[0.3em] uppercase mb-4">
           R&amp;D Lab
         </p>
         <h1 className="font-serif text-4xl md:text-6xl font-black">
@@ -59,7 +59,7 @@ export default function LabIndexPage() {
               className="group bg-black p-8 flex flex-col gap-6 hover:bg-[#0a0a0a] transition-colors"
             >
               <div className="flex items-start justify-between">
-                <FlaskConical size={18} className="text-[#22d3ee]" />
+                <FlaskConical size={18} className="text-[#00F2FF]" />
                 <span
                   className={`px-2 py-0.5 border text-[10px] tracking-[0.2em] uppercase ${statusColor}`}
                 >
@@ -68,7 +68,7 @@ export default function LabIndexPage() {
               </div>
 
               <div>
-                <h2 className="font-serif text-xl font-bold mb-1 group-hover:text-[#22d3ee] transition-colors">
+                <h2 className="font-serif text-xl font-bold mb-1 group-hover:text-[#00F2FF] transition-colors">
                   {name}
                 </h2>
                 <p className="text-[#a0a0a0] text-[10px] tracking-[0.1em] uppercase mb-4">
@@ -90,7 +90,7 @@ export default function LabIndexPage() {
                 </div>
                 <ArrowRight
                   size={14}
-                  className="text-[#22d3ee] opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+                  className="text-[#00F2FF] opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
                 />
               </div>
             </Link>

@@ -35,7 +35,7 @@ export default function WorkIndexPage() {
   return (
     <div className="min-h-screen px-6 md:px-12 py-16">
       <div className="mb-16">
-        <p className="text-[#22d3ee] text-xs tracking-[0.3em] uppercase mb-4">
+        <p className="text-[#00F2FF] text-xs tracking-[0.3em] uppercase mb-4">
           Proof of Work
         </p>
         <h1 className="font-serif text-4xl md:text-6xl font-black">
@@ -63,7 +63,7 @@ export default function WorkIndexPage() {
                   </span>
                 ))}
               </div>
-              <h2 className="font-serif text-xl md:text-2xl font-bold mb-2 group-hover:text-[#22d3ee] transition-colors">
+              <h2 className="font-serif text-xl md:text-2xl font-bold mb-2 group-hover:text-[#00F2FF] transition-colors">
                 {title}
               </h2>
               <p className="text-[#a0a0a0] text-xs tracking-[0.1em] uppercase">
@@ -73,7 +73,7 @@ export default function WorkIndexPage() {
 
             <div className="flex items-center gap-8">
               <div className="text-right">
-                <p className="font-serif text-3xl font-black text-[#22d3ee]">
+                <p className="font-serif text-3xl font-black text-[#00F2FF]">
                   {metric}
                 </p>
                 <p className="text-[#a0a0a0] text-[10px] tracking-[0.15em] uppercase">
@@ -82,7 +82,7 @@ export default function WorkIndexPage() {
               </div>
               <ArrowRight
                 size={16}
-                className="text-[#22d3ee] opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all"
+                className="text-[#00F2FF] opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all"
               />
             </div>
           </Link>

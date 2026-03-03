@@ -2,12 +2,12 @@
 
 :root {
   --background: #000000;
-  --foreground: #f0f0f0;
-  --accent: #22d3ee;
-  --accent-dim: #0891b2;
+  --foreground: #ffffff;
+  --accent: #00F2FF;
+  --accent-dim: #00bcd4;
   --muted: #1a1a1a;
   --border: #1f1f1f;
-  --font-playfair: "Playfair Display", Georgia, "Times New Roman", serif;
+  --font-playfair: var(--font-playfair), Georgia, "Times New Roman", serif;
 }
 
 @theme inline {
@@ -40,15 +40,15 @@ h3 {
 }
 
 ::selection {
-  background: #22d3ee33;
-  color: #22d3ee;
+  background: #00F2FF22;
+  color: #00F2FF;
 }
 
 .glow-cyan {
-  text-shadow: 0 0 20px #22d3ee66;
+  text-shadow: 0 0 20px #00F2FF66;
 }
 
 .border-glow {
-  border-color: #22d3ee;
-  box-shadow: 0 0 10px #22d3ee33;
+  border-color: #00F2FF;
+  box-shadow: 0 0 10px #00F2FF33;
 }

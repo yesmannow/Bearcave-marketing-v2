@@ -1,13 +1,24 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
+import { Geist } from "next/font/google";
+import { Playfair_Display } from "next/font/google";
 import "./globals.css";
 import Header from "./components/Header";
 import LenisProvider from "./components/LenisProvider";
+import TelemetryHUD from "./components/TelemetryHUD";
 
-const geistSans = localFont({
-  src: "../public/fonts/geist-sans-latin.woff2",
+const geistSans = Geist({
   variable: "--font-geist-sans",
+  subsets: ["latin"],
   display: "swap",
+  weight: "variable",
+});
+
+const playfair = Playfair_Display({
+  variable: "--font-playfair",
+  subsets: ["latin"],
+  display: "swap",
+  style: ["normal", "italic"],
+  weight: "variable",
 });
 
 export const metadata: Metadata = {
@@ -46,28 +57,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={geistSans.variable}>
+    <html lang="en" className={`${geistSans.variable} ${playfair.variable}`}>
       <head>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
-        {/* Playfair Display — loaded at runtime from Google Fonts */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&display=swap"
-          rel="stylesheet"
         />
       </head>
       <body className="bg-black text-[#f0f0f0] antialiased">
         <LenisProvider>
           <Header />
           <main className="pt-16">{children}</main>
+          <TelemetryHUD />
         </LenisProvider>
       </body>
     </html>

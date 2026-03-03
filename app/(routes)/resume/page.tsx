@@ -96,7 +96,7 @@ export default function ResumePage() {
       {/* Header */}
       <div className="px-6 md:px-12 py-16 border-b border-[#1f1f1f] flex items-end justify-between gap-8">
         <div>
-          <p className="text-[#22d3ee] text-xs tracking-[0.3em] uppercase mb-4">
+          <p className="text-[#00F2FF] text-xs tracking-[0.3em] uppercase mb-4">
             Career Matrix
           </p>
           <h1 className="font-serif text-4xl md:text-6xl font-black">
@@ -105,7 +105,7 @@ export default function ResumePage() {
             Trajectory.
           </h1>
         </div>
-        <button className="inline-flex items-center gap-2 px-5 py-3 border border-[#1f1f1f] text-[#a0a0a0] text-xs tracking-[0.15em] uppercase hover:border-[#22d3ee] hover:text-[#22d3ee] transition-colors shrink-0">
+        <button className="inline-flex items-center gap-2 px-5 py-3 border border-[#1f1f1f] text-[#a0a0a0] text-xs tracking-[0.15em] uppercase hover:border-[#00F2FF] hover:text-[#00F2FF] transition-colors shrink-0">
           <Download size={14} />
           PDF Resume
         </button>
@@ -117,7 +117,7 @@ export default function ResumePage() {
           {/* Progress track */}
           <div className="absolute left-6 md:left-12 top-16 bottom-16 w-px bg-[#1f1f1f]">
             <motion.div
-              className="absolute top-0 left-0 right-0 bg-[#22d3ee] origin-top"
+              className="absolute top-0 left-0 right-0 bg-[#00F2FF] origin-top"
               style={{ height: progressBarHeight }}
             />
           </div>
@@ -133,18 +133,18 @@ export default function ResumePage() {
                 className="relative"
               >
                 {/* Node */}
-                <div className="absolute -left-8 top-1 w-2 h-2 rounded-full bg-[#22d3ee] ring-4 ring-black" />
+                <div className="absolute -left-8 top-1 w-2 h-2 rounded-full bg-[#00F2FF] ring-4 ring-black" />
 
                 {/* Year badge */}
-                <span className="inline-block px-2 py-1 border border-[#22d3ee] text-[#22d3ee] text-[10px] tracking-[0.3em] uppercase mb-4">
+                <span className="inline-block px-2 py-1 border border-[#00F2FF] text-[#00F2FF] text-[10px] tracking-[0.3em] uppercase mb-4">
                   {item.year}
                 </span>
 
                 <div className="flex items-start gap-3 mb-3">
                   {item.type === "role" ? (
-                    <Briefcase size={16} className="text-[#22d3ee] mt-1 shrink-0" />
+                    <Briefcase size={16} className="text-[#00F2FF] mt-1 shrink-0" />
                   ) : (
-                    <GraduationCap size={16} className="text-[#22d3ee] mt-1 shrink-0" />
+                    <GraduationCap size={16} className="text-[#00F2FF] mt-1 shrink-0" />
                   )}
                   <div>
                     <h2 className="font-serif text-xl md:text-2xl font-bold mb-1">
@@ -163,7 +163,7 @@ export default function ResumePage() {
                 <ul className="flex flex-col gap-2">
                   {item.highlights.map((h, j) => (
                     <li key={j} className="flex items-start gap-3 text-[#a0a0a0] text-sm">
-                      <span className="w-4 h-px bg-[#22d3ee] mt-2.5 shrink-0" />
+                      <span className="w-4 h-px bg-[#00F2FF] mt-2.5 shrink-0" />
                       {h}
                     </li>
                   ))}
@@ -177,7 +177,7 @@ export default function ResumePage() {
         <div className="border-l border-[#1f1f1f] px-8 py-16 flex flex-col gap-12">
           {/* Skills */}
           <section>
-            <p className="text-[#22d3ee] text-[10px] tracking-[0.3em] uppercase mb-6">
+            <p className="text-[#00F2FF] text-[10px] tracking-[0.3em] uppercase mb-6">
               Core Competencies
             </p>
             <div className="flex flex-col gap-4">
@@ -189,7 +189,7 @@ export default function ResumePage() {
                   </div>
                   <div className="h-px bg-[#1f1f1f] relative overflow-hidden">
                     <motion.div
-                      className="absolute top-0 left-0 h-full bg-[#22d3ee]"
+                      className="absolute top-0 left-0 h-full bg-[#00F2FF]"
                       initial={{ width: "0%" }}
                       whileInView={{ width: `${level}%` }}
                       viewport={{ once: true }}
@@ -203,7 +203,7 @@ export default function ResumePage() {
 
           {/* Awards */}
           <section>
-            <p className="text-[#22d3ee] text-[10px] tracking-[0.3em] uppercase mb-6">
+            <p className="text-[#00F2FF] text-[10px] tracking-[0.3em] uppercase mb-6">
               Recognition
             </p>
             <div className="flex flex-col gap-4">
@@ -212,7 +212,7 @@ export default function ResumePage() {
                   key={title}
                   className="flex items-start gap-3 pb-4 border-b border-[#1f1f1f] last:border-0"
                 >
-                  <Award size={14} className="text-[#22d3ee] mt-0.5 shrink-0" />
+                  <Award size={14} className="text-[#00F2FF] mt-0.5 shrink-0" />
                   <div>
                     <p className="text-sm font-medium">{title}</p>
                     <p className="text-[#a0a0a0] text-xs">

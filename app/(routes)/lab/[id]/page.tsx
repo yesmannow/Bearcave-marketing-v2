@@ -15,7 +15,7 @@ const getTool = (id: string) => ({
   specs: [
     { label: "Language", value: "TypeScript 5.x" },
     { label: "Runtime", value: "Node.js 20 LTS" },
-    { label: "Framework", value: "Next.js 15 App Router" },
+    { label: "Framework", value: "Next.js App Router" },
     { label: "Database", value: "PostgreSQL via Prisma" },
     { label: "AI Layer", value: "OpenAI GPT-4o" },
     { label: "Deployment", value: "Vercel Edge" },
@@ -24,7 +24,7 @@ const getTool = (id: string) => ({
   ],
   dependencies: [
     { name: "framer-motion", version: "^12.0.0", purpose: "Animation layer" },
-    { name: "lenis", version: "^1.1.0", purpose: "Smooth scroll engine" },
+    { name: "lenis", version: "^1.3.18", purpose: "Smooth scroll engine" },
     { name: "zod", version: "^3.22.0", purpose: "Schema validation" },
     { name: "prisma", version: "^5.0.0", purpose: "ORM / data layer" },
   ],
@@ -68,7 +68,7 @@ export default async function LabItemPage({ params }: Props) {
       <div className="px-6 md:px-12 py-8 border-b border-[#1f1f1f]">
         <Link
           href="/lab"
-          className="inline-flex items-center gap-2 text-[#a0a0a0] text-xs tracking-[0.15em] uppercase hover:text-[#22d3ee] transition-colors"
+          className="inline-flex items-center gap-2 text-[#a0a0a0] text-xs tracking-[0.15em] uppercase hover:text-[#00F2FF] transition-colors"
         >
           <ArrowLeft size={14} />
           Lab Index
@@ -104,15 +104,15 @@ export default async function LabItemPage({ params }: Props) {
           {/* Architecture */}
           <section>
             <div className="flex items-center gap-3 mb-6">
-              <Cpu size={16} className="text-[#22d3ee]" />
-              <h2 className="text-xs tracking-[0.3em] uppercase text-[#22d3ee]">
+              <Cpu size={16} className="text-[#00F2FF]" />
+              <h2 className="text-xs tracking-[0.3em] uppercase text-[#00F2FF]">
                 Architecture Decisions
               </h2>
             </div>
             <ul className="flex flex-col gap-4">
               {tool.architecture.map((item, i) => (
                 <li key={i} className="flex gap-4 text-[#c0c0c0] text-sm leading-relaxed">
-                  <span className="text-[#22d3ee] font-mono text-xs mt-0.5 shrink-0">
+                  <span className="text-[#00F2FF] font-mono text-xs mt-0.5 shrink-0">
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   {item}
@@ -124,8 +124,8 @@ export default async function LabItemPage({ params }: Props) {
           {/* Dependencies */}
           <section>
             <div className="flex items-center gap-3 mb-6">
-              <Package size={16} className="text-[#22d3ee]" />
-              <h2 className="text-xs tracking-[0.3em] uppercase text-[#22d3ee]">
+              <Package size={16} className="text-[#00F2FF]" />
+              <h2 className="text-xs tracking-[0.3em] uppercase text-[#00F2FF]">
                 Key Dependencies
               </h2>
             </div>
@@ -135,7 +135,7 @@ export default async function LabItemPage({ params }: Props) {
                   key={name}
                   className="bg-black px-6 py-4 grid grid-cols-[1fr_auto_auto] gap-4 items-center"
                 >
-                  <span className="font-mono text-sm text-[#22d3ee]">{name}</span>
+                  <span className="font-mono text-sm text-[#00F2FF]">{name}</span>
                   <span className="font-mono text-xs text-[#a0a0a0]">{version}</span>
                   <span className="text-xs text-[#a0a0a0] text-right">{purpose}</span>
                 </div>
@@ -169,8 +169,8 @@ export default async function LabItemPage({ params }: Props) {
           {/* Spec table */}
           <div className="border border-[#1f1f1f]">
             <div className="flex items-center gap-3 px-6 py-4 border-b border-[#1f1f1f]">
-              <GitBranch size={14} className="text-[#22d3ee]" />
-              <h2 className="text-[10px] tracking-[0.3em] uppercase text-[#22d3ee]">
+              <GitBranch size={14} className="text-[#00F2FF]" />
+              <h2 className="text-[10px] tracking-[0.3em] uppercase text-[#00F2FF]">
                 Technical Spec
               </h2>
             </div>
@@ -204,7 +204,7 @@ export default async function LabItemPage({ params }: Props) {
                   key={tag}
                   className="flex items-center gap-1 px-3 py-1 bg-[#0a0a0a] border border-[#1f1f1f] text-[#a0a0a0] text-xs"
                 >
-                  <Zap size={10} className="text-[#22d3ee]" />
+                  <Zap size={10} className="text-[#00F2FF]" />
                   {tag}
                 </span>
               ))}

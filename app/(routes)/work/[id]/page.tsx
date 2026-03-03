@@ -53,7 +53,7 @@ export default async function CaseStudyPage({ params }: Props) {
       <div className="px-6 md:px-12 py-8 border-b border-[#1f1f1f]">
         <Link
           href="/work"
-          className="inline-flex items-center gap-2 text-[#a0a0a0] text-xs tracking-[0.15em] uppercase hover:text-[#22d3ee] transition-colors"
+          className="inline-flex items-center gap-2 text-[#a0a0a0] text-xs tracking-[0.15em] uppercase hover:text-[#00F2FF] transition-colors"
         >
           <ArrowLeft size={14} />
           All Proof
@@ -69,7 +69,7 @@ export default async function CaseStudyPage({ params }: Props) {
               {study.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="px-2 py-1 border border-[#22d3ee] text-[#22d3ee] text-[10px] tracking-[0.2em] uppercase"
+                  className="px-2 py-1 border border-[#00F2FF] text-[#00F2FF] text-[10px] tracking-[0.2em] uppercase"
                 >
                   {tag}
                 </span>
@@ -94,7 +94,7 @@ export default async function CaseStudyPage({ params }: Props) {
           <div className="grid grid-cols-3 gap-px bg-[#1f1f1f]">
             {study.metrics.map(({ label, value }) => (
               <div key={label} className="bg-black p-4">
-                <p className="text-[#22d3ee] font-serif text-2xl font-black mb-1">
+                <p className="text-[#00F2FF] font-serif text-2xl font-black mb-1">
                   {value}
                 </p>
                 <p className="text-[#a0a0a0] text-[10px] tracking-[0.15em] uppercase">
@@ -109,7 +109,7 @@ export default async function CaseStudyPage({ params }: Props) {
               href={study.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-[#22d3ee] text-xs tracking-[0.15em] uppercase hover:opacity-70 transition-opacity"
+              className="inline-flex items-center gap-2 text-[#00F2FF] text-xs tracking-[0.15em] uppercase hover:opacity-70 transition-opacity"
             >
               Live Project <ExternalLink size={12} />
             </a>
@@ -121,8 +121,8 @@ export default async function CaseStudyPage({ params }: Props) {
           {/* Challenge */}
           <section>
             <div className="flex items-center gap-3 mb-6">
-              <Target size={16} className="text-[#22d3ee]" />
-              <h2 className="text-xs tracking-[0.3em] uppercase text-[#22d3ee]">
+              <Target size={16} className="text-[#00F2FF]" />
+              <h2 className="text-xs tracking-[0.3em] uppercase text-[#00F2FF]">
                 The Challenge
               </h2>
             </div>
@@ -134,8 +134,8 @@ export default async function CaseStudyPage({ params }: Props) {
           {/* Approach */}
           <section>
             <div className="flex items-center gap-3 mb-6">
-              <TrendingUp size={16} className="text-[#22d3ee]" />
-              <h2 className="text-xs tracking-[0.3em] uppercase text-[#22d3ee]">
+              <TrendingUp size={16} className="text-[#00F2FF]" />
+              <h2 className="text-xs tracking-[0.3em] uppercase text-[#00F2FF]">
                 The Approach
               </h2>
             </div>
@@ -146,7 +146,7 @@ export default async function CaseStudyPage({ params }: Props) {
 
           {/* Outcome */}
           <section className="p-8 border border-[#1f1f1f] bg-[#0a0a0a]">
-            <h2 className="text-xs tracking-[0.3em] uppercase text-[#22d3ee] mb-4">
+            <h2 className="text-xs tracking-[0.3em] uppercase text-[#00F2FF] mb-4">
               Outcome
             </h2>
             <p className="font-serif text-xl md:text-2xl font-bold leading-relaxed">
@@ -156,7 +156,7 @@ export default async function CaseStudyPage({ params }: Props) {
 
           {/* Deliverables */}
           <section>
-            <h2 className="text-xs tracking-[0.3em] uppercase text-[#22d3ee] mb-6">
+            <h2 className="text-xs tracking-[0.3em] uppercase text-[#00F2FF] mb-6">
               Deliverables
             </h2>
             <ul className="flex flex-col gap-3">
@@ -165,7 +165,7 @@ export default async function CaseStudyPage({ params }: Props) {
                   key={i}
                   className="flex items-center gap-3 text-[#c0c0c0] text-sm"
                 >
-                  <span className="w-5 h-px bg-[#22d3ee] shrink-0" />
+                  <span className="w-5 h-px bg-[#00F2FF] shrink-0" />
                   {item}
                 </li>
               ))}

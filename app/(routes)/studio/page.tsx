@@ -11,7 +11,7 @@ const GALLERY_ITEMS = [
     year: "2025",
     aspect: "landscape",
     color: "#0a0a0a",
-    accent: "#22d3ee",
+    accent: "#00F2FF",
   },
   {
     id: 2,
@@ -20,7 +20,7 @@ const GALLERY_ITEMS = [
     year: "2025",
     aspect: "portrait",
     color: "#050a0a",
-    accent: "#0891b2",
+    accent: "#00bcd4",
   },
   {
     id: 3,
@@ -29,7 +29,7 @@ const GALLERY_ITEMS = [
     year: "2024",
     aspect: "landscape",
     color: "#040404",
-    accent: "#22d3ee",
+    accent: "#00F2FF",
   },
   {
     id: 4,
@@ -38,7 +38,7 @@ const GALLERY_ITEMS = [
     year: "2024",
     aspect: "square",
     color: "#080808",
-    accent: "#0891b2",
+    accent: "#00bcd4",
   },
   {
     id: 5,
@@ -47,7 +47,7 @@ const GALLERY_ITEMS = [
     year: "2025",
     aspect: "portrait",
     color: "#020606",
-    accent: "#22d3ee",
+    accent: "#00F2FF",
   },
   {
     id: 6,
@@ -56,7 +56,7 @@ const GALLERY_ITEMS = [
     year: "2025",
     aspect: "square",
     color: "#060606",
-    accent: "#0891b2",
+    accent: "#00bcd4",
   },
 ];
 
@@ -81,7 +81,7 @@ export default function StudioPage() {
     <div className="min-h-screen">
       {/* Header */}
       <div className="px-6 md:px-12 py-16 border-b border-[#1f1f1f]">
-        <p className="text-[#22d3ee] text-xs tracking-[0.3em] uppercase mb-4">
+        <p className="text-[#00F2FF] text-xs tracking-[0.3em] uppercase mb-4">
           Studio
         </p>
         <h1 className="font-serif text-4xl md:text-6xl font-black">
