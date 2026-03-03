@@ -29,6 +29,34 @@ const NODE_TYPE_LABELS: Record<NodeType, string> = {
   output:  "Output",
 };
 
+/** Small SVG helper: edge label centred at the midpoint of a line. */
+function EdgeLabel({
+  x,
+  y,
+  text,
+  color,
+}: {
+  x: number;
+  y: number;
+  text: string;
+  color: string;
+}) {
+  return (
+    <text
+      x={x}
+      y={y - 5}
+      textAnchor="middle"
+      fill={color}
+      fontSize="7"
+      fontFamily="monospace"
+      letterSpacing="0.06em"
+      opacity="0.55"
+    >
+      {text}
+    </text>
+  );
+}
+
 export default async function LabItemLayout({ children, params }: Props) {
   const { id } = await params;
   const tool = getTool(id);
@@ -134,18 +162,7 @@ export default async function LabItemLayout({ children, params }: Props) {
                     markerEnd={isDashed ? "url(#arrow-dashed)" : "url(#arrow-solid)"}
                   />
                   {label && (
-                    <text
-                      x={mx}
-                      y={my - 5}
-                      textAnchor="middle"
-                      fill={color}
-                      fontSize="7"
-                      fontFamily="monospace"
-                      letterSpacing="0.06em"
-                      opacity="0.55"
-                    >
-                      {label}
-                    </text>
+                    <EdgeLabel x={mx} y={my} text={label} color={color} />
                   )}
                 </g>
               );
