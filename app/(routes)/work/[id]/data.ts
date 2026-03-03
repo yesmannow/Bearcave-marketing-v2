@@ -620,6 +620,116 @@ const CASE_STUDIES: Record<string, CaseStudy> = {
   },
 };
 
+export type ProjectLens = "cmo" | "cto";
+
+export type Project = {
+  id: string;
+  lens: ProjectLens[];
+  title: string;
+  subtitle: string;
+  hook: string;
+  metrics: { label: string; value: string }[];
+  tags: string[];
+  narrative: {
+    act1: string;
+    act2: string;
+    act3: string;
+  };
+};
+
+export const projects: Project[] = [
+  {
+    id: "primary-colours",
+    lens: ["cmo"],
+    title: "Primary Colours",
+    subtitle: "Non-Profit Arts Leadership & Event Marketing",
+    hook: "Generating $46k for Local Arts through Strategic Board Leadership.",
+    metrics: [
+      { label: "Generated", value: "$46,000+" },
+      { label: "Audience", value: "10,000+" },
+      { label: "Artist Impact", value: "200+ Assisted" },
+    ],
+    tags: ["Non-Profit", "Event Marketing", "Sponsorship Strategy", "Board Leadership"],
+    narrative: {
+      act1: "Joined a legacy arts non-profit during a critical growth phase. The organization had deep community roots but lacked a modernized digital engine to scale its flagship exhibitions.",
+      act2: "Architected a multi-tier sponsorship portal ($500–$5,000) and a mobile-first 'Digital Map' for the 9.5-acre Installation Nation exhibition. Rebuilt the artist intake pipeline to handle 200+ applicants without manual overhead.",
+      act3: "Successfully funded the 23-day exhibition, generating $46,000+ for the local arts community and establishing a sustainable digital model for future programming.",
+    },
+  },
+  {
+    id: "urgent-care-indy",
+    lens: ["cmo", "cto"],
+    title: "UrgentCare Indy",
+    subtitle: "Healthcare Website & Digital Strategy",
+    hook: "Reducing Patient Friction via Full-Stack HIPAA-Safe Integration.",
+    metrics: [
+      { label: "Booking Lift", value: "+35%" },
+      { label: "Wait Times", value: "Real-time Sync" },
+      { label: "SEO Rank", value: "Top 3 Local" },
+    ],
+    tags: ["Healthcare", "API Integration", "Clockwise MD", "Local SEO"],
+    narrative: {
+      act1: "The clinic faced front-desk bottlenecks and patient drop-off due to invisible wait times and a friction-heavy manual check-in process.",
+      act2: "Architected a custom API bridge between the WordPress frontend and Clockwise MD to display live wait-time telemetry. Integrated AnywhereCare for encrypted telehealth consultations.",
+      act3: "Achieved a 35% increase in online bookings and a significant reduction in waiting room anxiety through transparent, real-time data delivery.",
+    },
+  },
+  {
+    id: "clean-aesthetic",
+    lens: ["cmo"],
+    title: "Clean Aesthetic",
+    subtitle: "Medical Branding & Identity Design",
+    hook: "Luxury Branding for Concierge Medical Aesthetics.",
+    metrics: [
+      { label: "Identity", value: "High-Recall" },
+      { label: "Launch Time", value: "4 Weeks" },
+      { label: "Market", value: "Luxury Tier" },
+    ],
+    tags: ["Branding", "Medical Aesthetics", "Logo Design", "Typography"],
+    narrative: {
+      act1: "A high-end concierge Botox provider needed an identity that conveyed medical credibility while appealing to a premium, luxury-focused demographic.",
+      act2: "Engineered a geometric 'CA' monogram using golden-ratio principles. Selected a 'Clinical Teal' palette (#40E0D0) to bridge the gap between healthcare trust and boutique aesthetics.",
+      act3: "Established immediate market authority, enabling a successful launch with a cohesive visual identity across digital, print, and clinical environments.",
+    },
+  },
+  {
+    id: "russell-painting",
+    lens: ["cmo"],
+    title: "Russell Painting Company",
+    subtitle: "Service Business Trust & Conversion Strategy",
+    hook: "Leveraging 43 Years of Heritage for Modern Lead Generation.",
+    metrics: [
+      { label: "Rating", value: "4.9/5 Stars" },
+      { label: "Experience", value: "43+ Years" },
+      { label: "SEO", value: "Local Dominance" },
+    ],
+    tags: ["Home Services", "UX Research", "Trust Optimization", "Lead Gen"],
+    narrative: {
+      act1: "A 40-year-old family business with massive local credibility was losing market share to younger competitors due to an outdated, low-conversion digital presence.",
+      act2: "Overhauled the UX to focus on 'Trust Signals.' Built custom aggregators for HomeAdvisor and Angie's List data and implemented a high-performance 'Before/After' project gallery.",
+      act3: "Transformed the site into a high-intent lead engine, maintaining 4.9/5 star sentiment while significantly increasing online quote requests.",
+    },
+  },
+  {
+    id: "behr-pet-essentials",
+    lens: ["cmo", "cto"],
+    title: "Behr Pet Essentials",
+    subtitle: "E-commerce Brand & Multi-Channel Strategy",
+    hook: "Architecting a Synchronized Multi-Channel Sales Engine.",
+    metrics: [
+      { label: "Amazon Rating", value: "4+ Stars" },
+      { label: "Retention", value: "High Repeat" },
+      { label: "Validation", value: "Vet Recommended" },
+    ],
+    tags: ["E-commerce", "Amazon Optimization", "Shopify", "DTC Strategy"],
+    narrative: {
+      act1: "Launching an organic pet skincare line required building trust in a regulated category and managing complex inventory across multiple sales channels.",
+      act2: "Built a unified inventory bridge between Shopify and Amazon. Developed a custom 'Condition Finder' tool that used dermatological logic to drive a 27% lift in add-to-cart rates.",
+      act3: "Achieved 4+ star ratings across all platforms and established a high-retention customer base through veterinarian-endorsed educational content.",
+    },
+  },
+];
+
 export const getCaseStudy = (id: string): CaseStudy =>
   CASE_STUDIES[id] ?? {
     id,
