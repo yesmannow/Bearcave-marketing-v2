@@ -206,6 +206,18 @@ const CTO_PROJECTS: Project[] = [
     techHighlight: "2 Channels",
     techHighlightLabel: "Synchronized Sales",
   },
+  {
+    id: "the-closer",
+    title: "The Closer",
+    client: "Confidential Client",
+    year: "2025",
+    tags: ["E-Commerce", "Stripe API", "Automation"],
+    roi: "0",
+    roiLabel: "Manual Invoices",
+    techStack: ["Gravity Forms", "WooCommerce", "Stripe API"],
+    techHighlight: "0",
+    techHighlightLabel: "Manual Invoices",
+  },
 ];
 
 const LENS_CONFIG = {

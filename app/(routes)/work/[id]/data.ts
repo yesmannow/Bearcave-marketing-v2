@@ -618,6 +618,73 @@ const CASE_STUDIES: Record<string, CaseStudy> = {
     ],
     url: "#",
   },
+
+  "the-closer": {
+    id: "the-closer",
+    title: "The Closer",
+    client: "Confidential Client",
+    year: "2025",
+    duration: "3 months",
+    tags: ["CTO", "Technical Architecture", "Stripe API", "Automation"],
+    headline: "Zero Manual Invoices. Automated Revenue. Deals Closed.",
+    challenge:
+      "Deals closed over the phone were being lost during the critical cooling-off period caused by a manual 30-minute invoice creation process. Sales reps spent half an hour generating each invoice by hand — by the time the customer received it, momentum had evaporated. Compounding this, the requirement for full upfront payment on $2,000+ high-ticket training bundles created an insurmountable barrier for a significant segment of qualified buyers who needed flexible financing to commit.",
+    approach:
+      "Architected a 'Quote-to-Order' engine using a tightly integrated stack: Gravity Forms (Quote Generation) → WooCommerce (Automated Order Creation) → Stripe API (Payment Configuration) → ACF (Custom Fields for plan data). The system embedded intelligent automation at every stage — automatic quote expiration, timed reminder emails to re-engage prospects, and a FluentCRM sync to give the sales team full pipeline visibility. ACF-driven payment plans spanning 3–18 months were wired to automated Stripe recurring subscriptions with built-in failure-retry logic, removing all manual intervention from the accounts-receivable workflow.",
+    outcome:
+      "Eliminated manual invoicing entirely — zero manual invoices, zero accounts-receivable delays. The 'Pay-by-Link' system destroyed the 'I'll think about it' window that had been killing high-ticket closes. Automated recurring subscriptions with failure-retry logic expanded the addressable market through accessible financing, significantly increasing close rates and reducing the barrier to premium purchases.",
+    metrics: [
+      { label: "Manual Invoices", value: "0" },
+      { label: "Payment Plans", value: "Automated" },
+      { label: "Close Rate", value: "Increased" },
+    ],
+    deliverables: [
+      "Gravity Forms → WooCommerce quote-to-order engine",
+      "Custom Stripe payment pipeline with recurring subscriptions",
+      "ACF-driven payment plans (3–18 month terms)",
+      "Automated failure-retry and subscription management",
+      "FluentCRM pipeline sync for full sales visibility",
+    ],
+    process: [
+      {
+        step: "01",
+        label: "Quote Created",
+        description:
+          "Gravity Forms captures the high-ticket quote request and triggers the automated pipeline. Quote data is stored via ACF custom fields and a time-stamped expiration window is set — preventing indefinite open quotes and creating urgency for the prospect.",
+        duration: "Instant",
+        output: "Structured quote record · ACF field population · Expiration timer set",
+        status: "complete",
+      },
+      {
+        step: "02",
+        label: "Secure Email Sent",
+        description:
+          "A branded, secure 'Pay-by-Link' email is automatically dispatched to the prospect with their personalised quote. Automated reminder emails are scheduled within the expiration window. FluentCRM is synced to give the sales team real-time pipeline visibility.",
+        duration: "Instant",
+        output: "Pay-by-Link email · Reminder sequence activated · CRM record created",
+        status: "complete",
+      },
+      {
+        step: "03",
+        label: "Customer Choice",
+        description:
+          "The prospect selects their preferred payment method via the secure link: Pay in Full (single Stripe charge) or Installments (ACF-configured plan spanning 3–18 months). The selection dynamically configures the downstream WooCommerce order and Stripe subscription parameters.",
+        duration: "Customer-driven",
+        output: "Payment method selected · Stripe configuration resolved · Order parameters set",
+        status: "complete",
+      },
+      {
+        step: "04",
+        label: "Auto-Created Order",
+        description:
+          "WooCommerce auto-creates the order and Stripe processes the initial charge or sets up the recurring subscription. Failure-retry logic handles declined cards automatically. Zero manual intervention required from initial quote to completed sale.",
+        duration: "Instant",
+        output: "WooCommerce order · Stripe subscription active · Failure-retry armed",
+        status: "active",
+      },
+    ],
+    url: "#",
+  },
 };
 
 export type ProjectLens = "cmo" | "cto";
@@ -726,6 +793,24 @@ export const projects: Project[] = [
       act1: "Launching an organic pet skincare line required building trust in a regulated category and managing complex inventory across multiple sales channels.",
       act2: "Built a unified inventory bridge between Shopify and Amazon. Developed a custom 'Condition Finder' tool that used dermatological logic to drive a 27% lift in add-to-cart rates.",
       act3: "Achieved 4+ star ratings across all platforms and established a high-retention customer base through veterinarian-endorsed educational content.",
+    },
+  },
+  {
+    id: "the-closer",
+    lens: ["cto"],
+    title: "The Closer",
+    subtitle: "High-Ticket Quote-to-Order System",
+    hook: "Converting High-Ticket Friction into Automated Revenue.",
+    metrics: [
+      { label: "Manual Invoices", value: "0" },
+      { label: "Payment Plans", value: "Automated" },
+      { label: "Close Rate", value: "Increased" },
+    ],
+    tags: ["E-commerce", "Stripe API", "Automation", "Quote Management"],
+    narrative: {
+      act1: "High-value training bundles ($2,000+) were stalling due to payment friction. Sales reps were losing days manually generating invoices, and customers lacked the flexible payment options required for premium purchases.",
+      act2: "Architected a 'Quote-to-Order' engine using Gravity Forms and WooCommerce. Integrated a custom Stripe pipeline to offer ACF-driven payment plans (3-18 months) with automated recurring subscriptions and failure-retry logic.",
+      act3: "Eliminated manual invoicing entirely. The 'Pay-by-Link' system removed the 'I'll think about it' delay, significantly increasing close rates and expanding the addressable market through accessible financing.",
     },
   },
 ];
