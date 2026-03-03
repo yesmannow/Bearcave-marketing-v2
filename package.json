@@ -6,24 +6,32 @@
     "dev": "next dev",
     "build": "next build --webpack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "cleanup:dry-run": "tsx scripts/cld-cleanup.ts",
+    "cleanup:execute": "tsx scripts/cld-cleanup.ts --execute"
   },
   "dependencies": {
+    "@cloudinary/react": "^1.14.4",
+    "@cloudinary/url-gen": "^1.22.0",
+    "cloudinary": "^2.9.0",
     "framer-motion": "^12.34.4",
     "lenis": "^1.3.17",
     "lucide-react": "^0.576.0",
     "next": "16.1.6",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "react-parallax-tilt": "^1.7.319"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv": "^17.3.1",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "tailwindcss": "^4",
+    "tsx": "^4.21.0",
     "typescript": "^5"
   }
 }

@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import { useState } from "react";
+import { useState, useRef } from "react";
+import Image from "next/image";
 
 type Lens = "cmo" | "cto";
 
@@ -243,13 +244,34 @@ const LENS_CONFIG = {
 
 export default function WorkLens() {
   const [lens, setLens] = useState<Lens>("cmo");
-
   const config = LENS_CONFIG[lens];
 
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"]
+  });
+
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
+
   return (
-    <div className="min-h-screen px-6 md:px-12 py-16">
+    <div ref={containerRef} className="min-h-screen px-6 md:px-12 py-16 relative overflow-hidden">
+      {/* Parallax Bio Background */}
+      <motion.div
+        className="fixed inset-0 z-0 pointer-events-none opacity-5 mix-blend-screen grayscale"
+        style={{ y }}
+      >
+        <Image
+          src="https://res.cloudinary.com/djhqowk67/image/upload/f_auto,q_auto/v1/studio/photography/bio-featured-4"
+          alt="Systems Architect Identity"
+          fill
+          className="object-cover object-top"
+          sizes="100vw"
+        />
+      </motion.div>
+
       {/* Header */}
-      <div className="mb-12">
+      <div className="mb-12 relative z-10">
         <p className="text-[#00F2FF] text-xs tracking-[0.3em] uppercase mb-4">
           Proof of Work
         </p>

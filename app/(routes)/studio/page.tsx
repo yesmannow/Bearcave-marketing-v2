@@ -1,222 +1,554 @@
 "use client";
 
-import { useRef, useState, useCallback, useEffect } from "react";
-import { type MotionValue, motion, useScroll, useTransform } from "framer-motion";
-import DigitalLoupe from "@/app/components/DigitalLoupe";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Tilt from "react-parallax-tilt";
+import Image from "next/image";
+import { Camera, Palette, Shield } from "lucide-react";
+import type { GalleryCategory, MixedMediaResource } from "@/app/types/cloudinary";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Studio assets — branding artifacts
-// ─────────────────────────────────────────────────────────────────────────────
-
-type StudioAsset = {
-  id: number;
-  aspect: "landscape" | "portrait" | "square";
-  color: string;
-  accent: string;
+type CategoryConfig = {
+  id: GalleryCategory;
+  label: string;
+  icon: React.ReactNode;
 };
 
-const studioAssets: StudioAsset[] = [
-  { id: 1, aspect: "landscape", color: "#0a0805", accent: "#FF4500" },  // Taconinja
-  { id: 2, aspect: "square",    color: "#0a0504", accent: "#D4380D" },  // 317 BBQ
-  { id: 3, aspect: "portrait",  color: "#050a04", accent: "#7CB518" },  // Herb's Rub
-  { id: 4, aspect: "landscape", color: "#04050a", accent: "#00F2FF" },  // Circle City Kicks
+const CATEGORIES: CategoryConfig[] = [
+  { id: "photography", label: "PHOTOGRAPHY", icon: <Camera className="w-4 h-4" /> },
+  { id: "graphic-design", label: "DESIGN", icon: <Palette className="w-4 h-4" /> },
+  { id: "proof", label: "PROOF", icon: <Shield className="w-4 h-4" /> },
 ];
 
-// Keep alias so GalleryTrack can use the same name
-const GALLERY_ITEMS = studioAssets;
-
-const ASPECT_DIMS: Record<StudioAsset["aspect"], { w: string; h: string }> = {
-  landscape: { w: "w-80 md:w-[480px]", h: "h-52 md:h-72"    },
-  portrait:  { w: "w-52 md:w-72",      h: "h-72 md:h-[440px]" },
-  square:    { w: "w-64 md:w-80",       h: "h-64 md:h-80"    },
-};
-
-// ─────────────────────────────────────────────────────────────────────────────
-// GalleryTrack — renders the horizontal film reel of cards
-// ─────────────────────────────────────────────────────────────────────────────
-
-function GalleryTrack({ motionX }: { motionX: MotionValue<string> }) {
-  return (
-    <motion.div
-      style={{ x: motionX }}
-      className="flex items-center gap-8 px-16 will-change-transform"
-    >
-      {GALLERY_ITEMS.map((item) => {
-        const { w, h } = ASPECT_DIMS[item.aspect];
-        return (
-          <div key={item.id} className={`shrink-0 ${w} ${h} relative group`}>
-            <div
-              className="w-full h-full flex items-center justify-center border border-[#1f1f1f] relative overflow-hidden"
-              style={{ backgroundColor: item.color }}
-            >
-              {/* Dot-grid texture */}
-              <div
-                className="absolute inset-0 opacity-[0.06]"
-                style={{
-                  backgroundImage: `radial-gradient(circle, ${item.accent} 1px, transparent 1px)`,
-                  backgroundSize: "24px 24px",
-                }}
-              />
-              {/* Diagonal accent */}
-              <div
-                className="absolute inset-0"
-                style={{
-                  background: `linear-gradient(135deg, ${item.accent}0a 0%, transparent 55%)`,
-                }}
-              />
-              {/* Large index number */}
-              <span
-                className="font-serif text-7xl md:text-9xl font-black select-none"
-                style={{ color: item.accent, opacity: 0.08 }}
-              >
-                {String(item.id).padStart(2, "0")}
-              </span>
-            </div>
-          </div>
-        );
-      })}
-    </motion.div>
-  );
+interface GalleryResponse {
+  success: boolean;
+  category: GalleryCategory;
+  folder: string;
+  total: number;
+  resources: MixedMediaResource[];
+  error?: string;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// StudioPage
-// ─────────────────────────────────────────────────────────────────────────────
+// Custom hook to detect if the mouse is hovering over the featured showcase
+const useFeaturedHover = () => {
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  return { hoveredIndex, setHoveredIndex };
+};
 
-export default function StudioPage() {
-  /**
-   * Scroll driver: the outer container is 300vh tall so the sticky section
-   * stays visible for a long scrub. scrollYProgress [0→1] maps to the full
-   * height of that container.
-   */
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
+// Render the specific layout for the 6 featured items
+const FeaturedGrid = ({ featuredItems }: { featuredItems: MixedMediaResource[] }) => {
+  const { hoveredIndex, setHoveredIndex } = useFeaturedHover();
 
-  const { scrollYProgress } = useScroll({
-    target: scrollContainerRef,
-    offset: ["start start", "end end"],
-  });
+  if (featuredItems.length === 0) return null;
 
-  /**
-   * Translate the track from its natural (start) position to roughly
-   * -(trackWidth - viewportWidth). -62% of the track's own width covers
-   * all six cards across typical viewport sizes.
-   */
-  const trackX = useTransform(scrollYProgress, [0, 1], ["0%", "-62%"]);
+  // Ensure we only take up to 6 items to match the exact Aperture layout
+  const items = featuredItems.slice(0, 6);
 
-  // ── Loupe state ───────────────────────────────────────────────────────────
-  const [loupe, setLoupe] = useState({ x: -300, y: -300, visible: false });
-  const rafId = useRef<number | null>(null);
-
-  const onMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const nx = e.clientX - rect.left;
-    const ny = e.clientY - rect.top;
-    if (rafId.current !== null) cancelAnimationFrame(rafId.current);
-    rafId.current = requestAnimationFrame(() =>
-      setLoupe({ x: nx, y: ny, visible: true })
-    );
-  }, []);
-
-  const onMouseLeave = useCallback(() => {
-    setLoupe((p) => ({ ...p, visible: false }));
-  }, []);
-
-  // Cancel pending RAF on unmount
-  useEffect(
-    () => () => {
-      if (rafId.current !== null) cancelAnimationFrame(rafId.current);
-    },
-    []
-  );
+  const getGridClasses = (index: number) => {
+    switch (index) {
+      case 0: return "md:col-span-2 md:row-span-2 min-h-[400px] md:min-h-[600px]"; // The Anchor
+      case 1: return "md:col-span-1 md:row-span-1 min-h-[250px] md:min-h-[300px]"; // Vertical 1
+      case 2: return "md:col-span-1 md:row-span-1 min-h-[250px] md:min-h-[300px]"; // Vertical 2
+      case 3: return "md:col-span-2 md:row-span-1 min-h-[250px] md:min-h-[300px]"; // The Panorama
+      case 4: return "md:col-span-1 md:row-span-1 min-h-[250px] md:min-h-[300px]"; // Detail Square 1
+      case 5: return "md:col-span-1 md:row-span-1 min-h-[250px] md:min-h-[300px]"; // Detail Square 2
+      default: return "md:col-span-1 md:row-span-1 min-h-[250px] md:min-h-[300px]";
+    }
+  };
 
   return (
-    <div className="min-h-screen">
-      {/* ── Header ── */}
-      <div className="px-6 md:px-12 py-16 border-b border-[#1f1f1f]">
-        <p className="text-[#00F2FF] text-xs tracking-[0.3em] uppercase mb-4">
-          Studio
+    <div className="mb-16">
+      <div className="flex items-center gap-4 mb-8">
+        <h2 className="text-[#40E0D0] font-mono text-sm tracking-[0.2em] uppercase">
+          Director&apos;s Cut
+        </h2>
+        <div className="flex-1 h-px bg-linear-to-r from-[#40E0D0]/30 to-transparent" />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 auto-rows-min">
+        {items.map((resource, index) => {
+          const isHovered = hoveredIndex === index;
+          const isOtherHovered = hoveredIndex !== null && hoveredIndex !== index;
+          const optimizedUrl = resource.secure_url; // It's photography, no video optimization needed here typically
+
+          return (
+            <div
+              key={resource.public_id}
+              className={`relative group overflow-hidden rounded-lg border border-[#1f1f1f] bg-[#1a1f35] transition-all duration-700 ease-out cursor-pointer ${getGridClasses(index)} ${
+                isOtherHovered ? "blur-[3px] opacity-70 scale-[0.98]" : "blur-0 opacity-100 scale-100"
+              }`}
+              onMouseEnter={() => setHoveredIndex(index)}
+              onMouseLeave={() => setHoveredIndex(null)}
+            >
+              {/* Image Container */}
+              <div className="absolute inset-0">
+                <Image
+                  src={optimizedUrl}
+                  alt={resource.context?.custom?.alt || resource.display_name || "Featured artifact"}
+                  fill
+                  priority={true} // High-priority loading for LCP
+                  className={`object-cover transition-transform duration-1000 ease-out ${
+                    isHovered ? "scale-105" : "scale-100"
+                  }`}
+                  sizes={index === 0 ? "(max-width: 768px) 100vw, 50vw" : "(max-width: 768px) 100vw, 25vw"}
+                  placeholder={resource.blurDataURL ? "blur" : "empty"}
+                  blurDataURL={resource.blurDataURL}
+                />
+
+                {/* Holographic Overlay on Hover */}
+                <div className={`absolute inset-0 bg-linear-to-br from-[#40E0D0]/0 via-[#40E0D0]/5 to-[#40E0D0]/20 transition-opacity duration-500 pointer-events-none z-10 ${
+                  isHovered ? "opacity-100" : "opacity-0"
+                }`} />
+              </div>
+
+              {/* Ocean Pearl Accent Border */}
+              <div className={`absolute inset-0 border-2 transition-all duration-500 rounded-lg pointer-events-none z-30 ${
+                isHovered
+                  ? 'border-[#40E0D0]/40 shadow-[0_0_30px_rgba(64,224,208,0.2)]'
+                  : 'border-[#40E0D0]/0'
+              }`} />
+
+              {/* Metadata Overlay */}
+              <div className={`absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/90 via-black/40 to-transparent p-6 transition-all duration-500 z-20 flex flex-col justify-end ${
+                isHovered ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+              }`}>
+                <p className="text-white text-lg font-bold tracking-wide">
+                  {resource.context?.custom?.caption || resource.display_name}
+                </p>
+                <div className="flex items-center gap-3 mt-2">
+                  <span className="text-[10px] font-mono uppercase tracking-widest text-[#40E0D0]">
+                    Aperture Collection
+                  </span>
+                  <span className="w-1 h-1 rounded-full bg-[#40E0D0]/50" />
+                  <span className="text-[10px] font-mono text-[#64748b]">
+                    0{index + 1}
+                  </span>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+const DesignShowcase = ({ featuredItems }: { featuredItems: MixedMediaResource[] }) => {
+  const { hoveredIndex, setHoveredIndex } = useFeaturedHover();
+
+  if (featuredItems.length === 0) return null;
+
+  // Take up to 8 items for the Design Systems layout
+  const items = featuredItems.slice(0, 8);
+
+  const getGridClasses = (index: number) => {
+    switch (index) {
+      case 0: return "col-span-2 md:col-span-2 md:row-span-2 min-h-[400px] md:min-h-[600px]"; // Spotlight 1 (Indy Bicentennial)
+      case 1: return "col-span-2 md:col-span-2 md:row-span-2 min-h-[400px] md:min-h-[600px]"; // Spotlight 2 (Day at the Track)
+      case 2:
+      case 3:
+      case 4: return "col-span-1 md:col-span-4 lg:col-span-2 min-h-[300px]"; // Medium Row
+      case 5:
+      case 6:
+      case 7: return "col-span-1 md:col-span-2 lg:col-span-1 min-h-[250px]"; // Detail Row
+      default: return "col-span-1 min-h-[250px]";
+    }
+  };
+
+  return (
+    <div className="mb-16">
+      <div className="flex items-center gap-4 mb-8">
+        <h2 className="text-[#40E0D0] font-mono text-sm tracking-[0.2em] uppercase">
+          Brand Architecture
+        </h2>
+        <div className="flex-1 h-px bg-linear-to-r from-[#40E0D0]/30 to-transparent" />
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6 auto-rows-min">
+        {items.map((resource, index) => {
+          const isHovered = hoveredIndex === index;
+          const isOtherHovered = hoveredIndex !== null && hoveredIndex !== index;
+          const optimizedUrl = resource.resource_type === 'video'
+                ? resource.secure_url.replace('/upload/', '/upload/f_auto,q_auto/')
+                : resource.secure_url;
+
+          return (
+            <div
+              key={resource.public_id}
+              className={`relative group overflow-hidden rounded-lg border border-[#1f1f1f] bg-[#1a1f35] transition-all duration-700 ease-out cursor-pointer ${getGridClasses(index)} ${
+                isOtherHovered ? "grayscale-50 opacity-60 scale-[0.98]" : "grayscale-0 opacity-100 scale-100"
+              }`}
+              onMouseEnter={() => setHoveredIndex(index)}
+              onMouseLeave={() => setHoveredIndex(null)}
+            >
+              {/* Media Container */}
+              <div className="absolute inset-0">
+                {resource.resource_type === 'video' ? (
+                  <>
+                    <video
+                      src={optimizedUrl}
+                      className={`w-full h-full object-cover transition-transform duration-1000 ease-out ${isHovered ? "scale-105" : "scale-100"}`}
+                      muted
+                      loop
+                      playsInline
+                      autoPlay
+                    />
+                    {resource.duration && (
+                      <div className="absolute top-4 right-4 bg-black/70 backdrop-blur-md px-3 py-1.5 rounded-md border border-[#40E0D0]/30 z-20">
+                        <p className="text-[#40E0D0] text-xs font-mono font-bold tracking-wider">
+                          0:{String(Math.floor(resource.duration)).padStart(2, '0')}s
+                        </p>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <Image
+                    src={optimizedUrl}
+                    alt={resource.context?.custom?.alt || resource.display_name || "Featured design"}
+                    fill
+                    priority={true}
+                    className={`object-cover transition-transform duration-1000 ease-out ${isHovered ? "scale-105" : "scale-100"}`}
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    placeholder={resource.blurDataURL ? "blur" : "empty"}
+                    blurDataURL={resource.blurDataURL}
+                  />
+                )}
+
+                {/* Brand System Gradient Overlay */}
+                <div className={`absolute inset-0 bg-linear-to-t from-black/90 via-black/20 to-transparent transition-opacity duration-500 pointer-events-none z-10`} />
+              </div>
+
+              {/* Teal System Glow Accent */}
+              <div className={`absolute inset-0 border border-white/5 transition-all duration-500 rounded-lg pointer-events-none z-30 ${
+                isHovered
+                  ? 'border-[#40E0D0]/50 shadow-[0_0_40px_rgba(64,224,208,0.15)]'
+                  : ''
+              }`} />
+
+              {/* Systems Architecture Metadata Overlay */}
+              <div className={`absolute bottom-0 left-0 right-0 p-6 md:p-8 transition-all duration-500 z-20 flex flex-col justify-end transform ${
+                isHovered ? "translate-y-0" : "translate-y-2"
+              }`}>
+                <div className="flex justify-between items-end gap-4">
+                  <div>
+                    <h3 className="text-white text-xl md:text-2xl font-black tracking-tight mb-2">
+                      {resource.context?.custom?.caption || resource.display_name}
+                    </h3>
+                    <div className="flex items-center gap-3">
+                      <span className="text-[10px] md:text-xs font-mono uppercase tracking-widest text-[#40E0D0]">
+                        Identity System
+                      </span>
+                      <span className="w-1 h-1 rounded-full bg-[#40E0D0]/50" />
+                      <span className="text-[10px] md:text-xs font-mono text-[#64748b]">
+                        SYS.0{index + 1}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Related Work Link */}
+                  {resource.relatedWorkUrl && (
+                    <a
+                      href={resource.relatedWorkUrl}
+                      className={`shrink-0 flex items-center gap-2 text-[10px] md:text-xs uppercase tracking-widest bg-white/10 backdrop-blur-md px-4 py-2 md:py-2.5 rounded-full transition-all duration-500 border border-white/10 ${
+                        isHovered ? "text-[#40E0D0] border-[#40E0D0]/50 bg-[#40E0D0]/10 shadow-[0_0_20px_rgba(64,224,208,0.2)]" : "text-white/70"
+                      }`}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <span className="hidden md:inline">Explore</span> Case Study
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`transition-transform duration-300 ${isHovered ? "translate-x-1" : ""}`}>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                      </svg>
+                    </a>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+export default function StudioPage() {
+  const [activeCategory, setActiveCategory] = useState<GalleryCategory>("photography");
+  const [resources, setResources] = useState<MixedMediaResource[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchGallery = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const response = await fetch(`/api/gallery?category=${activeCategory}`);
+        const data: GalleryResponse = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to fetch gallery');
+        }
+
+        setResources(data.resources);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Unknown error');
+        console.error('Gallery fetch error:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchGallery();
+  }, [activeCategory]);
+
+  const featuredItems = resources.filter(r => r.public_id.includes('featured-p-'));
+  const featuredGdItems = resources.filter(r => r.public_id.includes('featured-gd-'));
+  const standardItems = resources.filter(r => !r.public_id.includes('featured-p-') && !r.public_id.includes('featured-gd-'));
+
+  return (
+    <div className="min-h-screen bg-[#0f172a] relative">
+      {/* Mix-Blend Background Typography */}
+      <div
+        aria-hidden="true"
+        className="fixed inset-0 flex items-center justify-center pointer-events-none z-0"
+        style={{ mixBlendMode: "difference" }}
+      >
+        <span
+          className="font-serif font-black select-none whitespace-nowrap"
+          style={{
+            fontSize: "clamp(6rem, 20vw, 24rem)",
+            color: "#ffffff",
+            opacity: 0.05,
+            letterSpacing: "0.08em",
+          }}
+        >
+          STUDIO
+        </span>
+      </div>
+
+      {/* Header */}
+      <div className="relative z-10 px-6 md:px-12 py-16 border-b border-[#1f1f1f]">
+        <p className="text-[#40E0D0] text-xs tracking-[0.3em] uppercase mb-4">
+          Visual Uplink
         </p>
-        <h1 className="font-serif text-4xl md:text-6xl font-black">
-          Visual Direction
+        <h1 className="font-serif text-4xl md:text-6xl font-black text-white">
+          Systems Architecture
           <br />
-          &amp; Identity Work.
+          Through Execution.
         </h1>
       </div>
 
-      {/* ── Horizontal film-reel scrub ── */}
-      {/*
-          The outer div is tall (300vh) to give a generous vertical scroll range.
-          The inner sticky section is exactly one viewport tall minus the header,
-          keeping the film reel pinned to the centre of the screen while the user
-          scrolls vertically — images translate across the X-axis in response.
-      */}
-      <div
-        ref={scrollContainerRef}
-        className="relative"
-        style={{ height: "300vh" }}
-      >
-        <div
-          className="sticky top-16 h-[calc(100vh-4rem)] overflow-hidden flex items-center relative"
-          style={{ cursor: "none" }}
-          onMouseMove={onMouseMove}
-          onMouseLeave={onMouseLeave}
-        >
-          {/* Side vignettes — give the reel a cinematic edge fade */}
-          <div
-            className="absolute inset-y-0 left-0 w-24 z-10 pointer-events-none"
-            style={{ background: "linear-gradient(90deg, black, transparent)" }}
-          />
-          <div
-            className="absolute inset-y-0 right-0 w-24 z-10 pointer-events-none"
-            style={{ background: "linear-gradient(270deg, black, transparent)" }}
-          />
+      {/* Triple-Lens Perspective Switcher */}
+      <div className="sticky top-0 z-50 bg-[#0f172a]/95 backdrop-blur-md border-b border-[#1f1f1f]">
+        <div className="px-6 md:px-12 py-6">
+          <div className="relative inline-flex items-center gap-2 bg-[#1a1f35] rounded-full p-1.5">
+            {/* Magnetic Pill Background */}
+            <motion.div
+              className="absolute h-[calc(100%-12px)] rounded-full bg-[#40E0D0]/20 border border-[#40E0D0]/40"
+              layoutId="activePill"
+              transition={{
+                type: "spring",
+                stiffness: 380,
+                damping: 30,
+              }}
+              style={{
+                left: `${CATEGORIES.findIndex(c => c.id === activeCategory) * 33.33}%`,
+                width: "33.33%",
+              }}
+            />
 
-          {/* ARTIFACTS — mix-blend-difference background word */}
-          <div
-            aria-hidden="true"
-            className="absolute inset-0 flex items-center justify-center pointer-events-none z-0"
-            style={{ mixBlendMode: "difference" }}
-          >
-            <span
-              className="font-serif font-black select-none whitespace-nowrap"
-              style={{ fontSize: "clamp(5rem, 16vw, 18rem)", color: "#ffffff", opacity: 0.07, letterSpacing: "0.05em" }}
-            >
-              ARTIFACTS
-            </span>
+            {/* Category Buttons */}
+            {CATEGORIES.map((category) => (
+              <button
+                key={category.id}
+                onClick={() => setActiveCategory(category.id)}
+                className={`relative z-10 px-6 py-3 rounded-full text-sm font-bold tracking-wider transition-colors duration-200 flex items-center gap-2 ${
+                  activeCategory === category.id
+                    ? "text-[#40E0D0]"
+                    : "text-[#64748b] hover:text-white"
+                }`}
+              >
+                {category.icon}
+                {category.label}
+              </button>
+            ))}
           </div>
-
-          {/* ── Original gallery track (always visible) ── */}
-          <GalleryTrack motionX={trackX} />
-
-          {/* ── Digital Loupe ── */}
-          {/*
-              The DigitalLoupe renders two layers:
-              1. A clip-path: circle() aperture containing a duplicate of the
-                 gallery track at 2× scale, centred on the cursor.
-              2. A decorative optical glass ring with crosshair + cardinal ticks.
-          */}
-          <DigitalLoupe
-            cursorX={loupe.x}
-            cursorY={loupe.y}
-            visible={loupe.visible}
-            radius={88}
-          >
-            {/*
-                Duplicate track — identical markup and same `trackX` MotionValue
-                so its scroll position always matches the original.
-                The DigitalLoupe scales this 2× around the cursor, making the
-                content under the lens appear at twice the resolution.
-            */}
-            <GalleryTrack motionX={trackX} />
-          </DigitalLoupe>
         </div>
       </div>
 
-      {/* ── Footer caption ── */}
-      <div className="px-6 md:px-12 py-16 border-t border-[#1f1f1f]">
-        <p className="text-[#a0a0a0] text-sm max-w-xl leading-relaxed">
-          Creative direction, brand identity, and visual systems built for
-          executive-level presence. Every frame intentional.
+      {/* Gallery Content */}
+      <div className="relative z-10 px-6 md:px-12 py-12 min-h-[60vh]">
+        {loading && (
+          <div className="flex items-center justify-center py-24">
+            <div className="flex flex-col items-center gap-4">
+              <div className="w-12 h-12 border-4 border-[#40E0D0]/30 border-t-[#40E0D0] rounded-full animate-spin" />
+              <p className="text-[#64748b] text-sm tracking-wider">LOADING ARTIFACTS...</p>
+            </div>
+          </div>
+        )}
+
+        {error && (
+          <div className="flex items-center justify-center py-24">
+            <div className="bg-red-500/10 border border-red-500/30 rounded-lg px-6 py-4 max-w-md">
+              <p className="text-red-400 text-sm">{error}</p>
+            </div>
+          </div>
+        )}
+
+        {!loading && !error && resources.length === 0 && (
+          <div className="flex items-center justify-center py-24">
+            <p className="text-[#64748b] text-sm tracking-wider">NO ARTIFACTS FOUND IN THIS CATEGORY</p>
+          </div>
+        )}
+
+        {/* Featured Aperture Showcase */}
+        {activeCategory === "photography" && featuredItems.length > 0 && (
+          <FeaturedGrid featuredItems={featuredItems} />
+        )}
+
+        {/* Featured Design Systems Showcase */}
+        {activeCategory === "graphic-design" && featuredGdItems.length > 0 && (
+          <DesignShowcase featuredItems={featuredGdItems} />
+        )}
+
+        {/* Standard Masonry Grid with AnimatePresence */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeCategory}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6"
+          >
+            {standardItems.map((resource, index) => {
+              const aspectRatio = resource.width / resource.height;
+              const dominantColor = resource.colors?.[0]?.[0] || "#1a1f35";
+
+              const optimizedUrl = resource.resource_type === 'video'
+                ? resource.secure_url.replace('/upload/', '/upload/f_auto,q_auto/')
+                : resource.secure_url;
+
+              return (
+                <motion.div
+                  key={resource.public_id}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{
+                    duration: 0.5,
+                    delay: index * 0.05,
+                    ease: "easeOut",
+                  }}
+                  className="break-inside-avoid mb-6"
+                >
+                  <Tilt
+                    tiltMaxAngleX={8}
+                    tiltMaxAngleY={8}
+                    perspective={1000}
+                    scale={1.02}
+                    transitionSpeed={400}
+                    gyroscope={true}
+                  >
+                    <div className="relative group overflow-hidden rounded-lg border border-[#1f1f1f] bg-[#1a1f35]">
+                      {/* Image Container */}
+                      <div
+                        className="relative overflow-hidden"
+                        style={{
+                          aspectRatio: aspectRatio.toString(),
+                          backgroundColor: dominantColor,
+                        }}
+                      >
+                        {resource.resource_type === 'video' ? (
+                          <>
+                            <video
+                              src={optimizedUrl}
+                              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                              muted
+                              loop
+                              playsInline
+                              autoPlay
+                              onMouseEnter={(e) => e.currentTarget.play()}
+                              onMouseLeave={(e) => e.currentTarget.pause()}
+                            />
+                            {/* Modified Video Duration Badge */}
+                            {resource.duration && (
+                              <div className="absolute top-3 right-3 bg-black/70 backdrop-blur-sm px-2.5 py-1 rounded-md border border-[#40E0D0]/30 z-20">
+                                <p className="text-[#40E0D0] text-xs font-mono font-bold">
+                                  0:{String(Math.floor(resource.duration)).padStart(2, '0')}s
+                                </p>
+                              </div>
+                            )}
+                          </>
+                        ) : (
+                          <Image
+                            src={optimizedUrl}
+                            alt={resource.context?.custom?.alt || resource.display_name || "Studio artifact"}
+                            fill
+                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
+                            placeholder={resource.blurDataURL ? "blur" : "empty"}
+                            blurDataURL={resource.blurDataURL}
+                          />
+                        )}
+
+                        {/* Holographic Overlay on Hover */}
+                        <div className="absolute inset-0 bg-linear-to-br from-[#40E0D0]/0 via-[#40E0D0]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-10" />
+                      </div>
+
+                      {/* Metadata Overlay */}
+                      {(resource.context?.custom?.caption || resource.display_name || resource.workId) && (
+                        <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/90 via-black/50 to-transparent p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20 flex flex-col justify-end">
+                          <div className="flex justify-between items-end gap-4">
+                            <div>
+                              <p className="text-white text-sm font-bold tracking-wide">
+                                {resource.context?.custom?.caption || resource.display_name}
+                              </p>
+                              {resource.tags?.includes('featured') && (
+                                <span className="inline-block mt-2 text-[10px] uppercase tracking-widest text-[#40E0D0] border border-[#40E0D0]/30 bg-[#40E0D0]/10 px-2 py-0.5 rounded-full">
+                                  Featured
+                                </span>
+                              )}
+                            </div>
+
+                            {/* Evidence Links / View Case Study Button */}
+                            {resource.workId && (
+                              <a
+                                href={`/work/${resource.workId}`}
+                                className="shrink-0 flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-white hover:text-[#40E0D0] bg-white/10 hover:bg-white/20 backdrop-blur-md px-3 py-1.5 rounded-full transition-all border border-white/10"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                View Case Study
+                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                                  <polyline points="12 5 19 12 12 19"></polyline>
+                                </svg>
+                              </a>
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Technical Accent Border - Teal glow for videos */}
+                      <div className={`absolute inset-0 border-2 transition-all duration-300 rounded-lg pointer-events-none z-30 ${
+                        resource.resource_type === 'video'
+                          ? 'border-[#40E0D0]/0 group-hover:border-[#40E0D0]/50 group-hover:shadow-[0_0_20px_rgba(64,224,208,0.3)]'
+                          : 'border-[#40E0D0]/0 group-hover:border-[#40E0D0]/30'
+                      }`} />
+                    </div>
+                  </Tilt>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      {/* Footer */}
+      <div className="relative z-10 px-6 md:px-12 py-16 border-t border-[#1f1f1f] mt-24">
+        <p className="text-[#64748b] text-sm max-w-xl leading-relaxed">
+          High-performance artifact gallery powered by Cloudinary. Each category
+          represents a distinct lens through which Systems Architecture manifests:
+          visual capture, design synthesis, and technical proof.
         </p>
       </div>
     </div>

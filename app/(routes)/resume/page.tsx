@@ -14,6 +14,8 @@ import {
   VOLUNTEER_EXPERIENCE,
 } from "./data";
 
+import Image from "next/image";
+
 function FadeInWhenVisible({ children }: { children: React.ReactNode }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
@@ -32,45 +34,74 @@ function FadeInWhenVisible({ children }: { children: React.ReactNode }) {
 
 function Hero() {
   return (
-    <section className="px-6 md:px-12 py-24 border-b border-[#1f1f1f]">
-      <div className="max-w-5xl">
-        <p className="text-[#00F2FF] text-xs tracking-[0.3em] uppercase mb-6">
-          Professional Resume
-        </p>
+    <section className="px-6 md:px-12 py-24 border-b border-[#1f1f1f] relative overflow-hidden">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-16">
+        <div className="flex-1">
+          <p className="text-[#00F2FF] text-xs tracking-[0.3em] uppercase mb-6">
+            Professional Resume
+          </p>
 
-        <h1 className="font-serif text-5xl md:text-7xl font-black leading-[1.05] tracking-tight mb-8">
-          Jacob Darling
-        </h1>
+          <h1 className="font-serif text-5xl md:text-7xl font-black leading-[1.05] tracking-tight mb-8">
+            Jacob Darling
+          </h1>
 
-        <p className="text-2xl md:text-3xl text-[#a0a0a0] mb-8">
-          {SYSTEM_STATS.role}
-        </p>
+          <p className="text-2xl md:text-3xl text-[#a0a0a0] mb-8">
+            {SYSTEM_STATS.role}
+          </p>
 
-        <div className="flex flex-wrap gap-6 text-sm text-[#a0a0a0] mb-12">
-          <div className="flex items-center gap-2">
-            <MapPin size={16} className="text-[#00F2FF]" />
-            {SYSTEM_STATS.location}
+          <div className="flex flex-wrap gap-6 text-sm text-[#a0a0a0] mb-12">
+            <div className="flex items-center gap-2">
+              <MapPin size={16} className="text-[#00F2FF]" />
+              {SYSTEM_STATS.location}
+            </div>
+            <div className="flex items-center gap-2">
+              <Calendar size={16} className="text-[#00F2FF]" />
+              {SYSTEM_STATS.uptime} Experience
+            </div>
+            <div className="flex items-center gap-2">
+              <Mail size={16} className="text-[#00F2FF]" />
+              jacob@jacobdarling.com
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Calendar size={16} className="text-[#00F2FF]" />
-            {SYSTEM_STATS.uptime} Experience
-          </div>
-          <div className="flex items-center gap-2">
-            <Mail size={16} className="text-[#00F2FF]" />
-            jacob@jacobdarling.com
-          </div>
+
+          <p className="text-base md:text-lg text-[#a0a0a0] leading-relaxed max-w-3xl mb-12">
+            {EXECUTIVE_SUMMARY}
+          </p>
+
+          <button
+            className="inline-flex items-center gap-2 px-6 py-3 bg-[#00F2FF] text-black text-sm font-semibold tracking-widest uppercase transition-all hover:bg-[#00bcd4]"
+          >
+            <Download size={16} />
+            Download Resume
+          </button>
         </div>
 
-        <p className="text-base md:text-lg text-[#a0a0a0] leading-relaxed max-w-3xl mb-12">
-          {EXECUTIVE_SUMMARY}
-        </p>
-
-        <button
-          className="inline-flex items-center gap-2 px-6 py-3 bg-[#00F2FF] text-black text-sm font-semibold tracking-widest uppercase transition-all hover:bg-[#00bcd4]"
-        >
-          <Download size={16} />
-          Download Resume
-        </button>
+        {/* Visual Uplink Bio Frame */}
+        <div className="relative w-64 h-64 md:w-80 md:h-80 shrink-0">
+          <div className="absolute inset-0 rounded-full border border-[#00F2FF]/20 animate-[spin_10s_linear_infinite]" />
+          <div className="absolute inset-2 rounded-full border border-dashed border-[#00F2FF]/40 animate-[spin_15s_linear_infinite_reverse]" />
+          <div className="absolute inset-4 rounded-full overflow-hidden bg-[#111] border border-[#1f1f1f]">
+            <Image
+              src="https://res.cloudinary.com/djhqowk67/image/upload/f_auto,q_auto/v1/studio/graphic-design/bio-featured-2"
+              alt="Jacob Darling"
+              fill
+              className="object-cover grayscale hover:grayscale-0 transition-all duration-700 ease-out"
+              sizes="(max-width: 768px) 256px, 320px"
+            />
+            {/* Overlay scanline */}
+            <div className="absolute inset-0 pointer-events-none mix-blend-overlay opacity-30"
+                 style={{
+                   background: "linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 242, 255, 0.25) 50%)",
+                   backgroundSize: "100% 4px"
+                 }}
+            />
+          </div>
+          {/* Decorative nodes */}
+          <div className="absolute top-0 left-1/2 w-2 h-2 bg-[#00F2FF] rounded-full -translate-x-1/2 -translate-y-1/2 shadow-[0_0_10px_#00F2FF]" />
+          <div className="absolute bottom-0 left-1/2 w-2 h-2 bg-[#00F2FF] rounded-full -translate-x-1/2 translate-y-1/2 shadow-[0_0_10px_#00F2FF]" />
+          <div className="absolute left-0 top-1/2 w-2 h-2 bg-[#00F2FF] rounded-full -translate-x-1/2 -translate-y-1/2 shadow-[0_0_10px_#00F2FF]" />
+          <div className="absolute right-0 top-1/2 w-2 h-2 bg-[#00F2FF] rounded-full translate-x-1/2 -translate-y-1/2 shadow-[0_0_10px_#00F2FF]" />
+        </div>
       </div>
     </section>
   );
