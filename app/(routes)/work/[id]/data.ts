@@ -22,6 +22,8 @@ export type CaseStudy = {
   deliverables: string[];
   process: ProcessStep[];
   url: string;
+  /** Link to a Lab tool — shows a 'Try the Logic' CTA on the case study page */
+  labUrl?: string;
 };
 
 const CASE_STUDIES: Record<string, CaseStudy> = {
@@ -221,6 +223,75 @@ const CASE_STUDIES: Record<string, CaseStudy> = {
       },
     ],
     url: "#",
+    labUrl: "/lab/site-security-intelligence",
+  },
+
+  "the-compass": {
+    id: "the-compass",
+    title: "The Compass",
+    client: "Multi-Brand Operator",
+    year: "2024",
+    duration: "6 months",
+    tags: ["CTO", "Observability", "Infrastructure", "Scale"],
+    headline: "99.98% Uptime SLA Across a Distributed Multi-Brand Platform.",
+    challenge:
+      "A multi-brand operator running six distinct digital properties lacked unified observability — no cross-service alerting, no shared SLA framework, and no predictive model for capacity planning. Individual brand teams operated in silos, creating blind spots that threatened the group's cumulative uptime commitment to enterprise clients.",
+    approach:
+      "Deployed a centralised observability stack (Datadog + AWS CloudWatch) across all six properties, with a shared SLA dashboard giving leadership a single pane of glass. Kubernetes-based autoscaling rules calibrated to historical traffic patterns allowed each brand to absorb peak load without manual intervention. A custom Clinical Compass scoring model was built to surface anomalies before they breached thresholds.",
+    outcome:
+      "99.98% uptime SLA achieved and maintained across all six brands. P95 latency reduced by 62%. The Clinical Compass model now predicts and resolves 94% of anomalies automatically — before a single alert fires.",
+    metrics: [
+      { label: "Uptime SLA", value: "99.98%" },
+      { label: "Latency Reduction", value: "−62% P95" },
+      { label: "Auto-Resolved Anomalies", value: "94%" },
+    ],
+    deliverables: [
+      "Centralised Datadog observability stack",
+      "Kubernetes autoscaling configuration",
+      "Clinical Compass anomaly scoring model",
+      "Executive SLA dashboard",
+      "Cross-brand alerting runbook",
+    ],
+    process: [
+      {
+        step: "01",
+        label: "Observability Audit",
+        description:
+          "Mapped the monitoring blind spots across all six brand properties. Identified three critical alert gaps responsible for untracked degradation windows. Established baseline SLA telemetry.",
+        duration: "Weeks 1–3",
+        output: "Monitoring gap report · SLA baseline · Alert priority matrix",
+        status: "complete",
+      },
+      {
+        step: "02",
+        label: "Centralised Stack Deployment",
+        description:
+          "Deployed Datadog agents across the full infrastructure with unified tagging taxonomy. Configured AWS CloudWatch cross-account dashboards. Set P95 latency and error-rate thresholds per brand.",
+        duration: "Weeks 4–8",
+        output: "Datadog configuration · CloudWatch dashboards · Alert runbook",
+        status: "complete",
+      },
+      {
+        step: "03",
+        label: "Clinical Compass Model",
+        description:
+          "Built the Clinical Compass anomaly scoring model — a TensorFlow-backed signal classifier that weights incoming infrastructure metrics and predicts degradation before thresholds are breached. Model trained on 18 months of historical traffic data.",
+        duration: "Weeks 9–16",
+        output: "Trained TF model · Scoring pipeline · Auto-remediation playbook",
+        status: "complete",
+      },
+      {
+        step: "04",
+        label: "SLA Governance",
+        description:
+          "Established a monthly SLA review cadence with automated reporting. Kubernetes HPA rules tuned to handle 3× traffic spikes without manual scaling. Ongoing model retraining pipeline keeps anomaly detection sharp.",
+        duration: "Ongoing",
+        output: "Monthly SLA report · HPA configuration · Model retraining schedule",
+        status: "active",
+      },
+    ],
+    url: "#",
+    labUrl: "/lab/clinical-compass",
   },
 
   "the-launchpad": {

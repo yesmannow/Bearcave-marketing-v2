@@ -1,4 +1,5 @@
-import { ExternalLink, Clock, Target, TrendingUp } from "lucide-react";
+import { ExternalLink, Clock, Target, TrendingUp, FlaskConical } from "lucide-react";
+import Link from "next/link";
 import type { Metadata } from "next";
 import { getCaseStudy } from "./data";
 
@@ -102,6 +103,27 @@ export default async function CaseStudyPage({ params }: Props) {
             ))}
           </ul>
         </section>
+
+        {/* Try the Logic CTA — shown when a related Lab tool exists */}
+        {study.labUrl && (
+          <section className="border border-[#00F2FF33] bg-[#00F2FF08] p-6">
+            <p className="text-[10px] tracking-[0.3em] uppercase text-[#00F2FF] mb-3">
+              Authority Loop
+            </p>
+            <p className="text-[#c0c0c0] text-sm leading-relaxed mb-5">
+              The logic powering this case study is open for inspection. Explore the
+              architecture, review the signal pipeline, and run the model against
+              your own inputs.
+            </p>
+            <Link
+              href={study.labUrl}
+              className="inline-flex items-center gap-2 px-5 py-3 border border-[#00F2FF] text-[#00F2FF] text-xs tracking-[0.2em] uppercase hover:bg-[#00F2FF] hover:text-black transition-colors"
+            >
+              <FlaskConical size={14} />
+              Try the Logic
+            </Link>
+          </section>
+        )}
       </div>
 
       {/* Right — pinned interactive dashboard asset */}
@@ -172,6 +194,39 @@ export default async function CaseStudyPage({ params }: Props) {
           >
             Live Project <ExternalLink size={12} />
           </a>
+        )}
+
+        {/* Infrastructure Proof panel — shown for security/infrastructure case studies */}
+        {study.labUrl && study.tags.some((t) => /security|infrastructure|cto/i.test(t)) && (
+          <div className="border border-[#1f1f1f] bg-[#040404]">
+            <div className="px-6 py-4 border-b border-[#1f1f1f]">
+              <p className="text-[10px] tracking-[0.3em] uppercase text-[#00F2FF]">
+                Infrastructure Proof
+              </p>
+            </div>
+            <div className="flex flex-col gap-px bg-[#1f1f1f]">
+              {study.metrics.map(({ label, value }) => (
+                <div
+                  key={label}
+                  className="bg-[#040404] px-6 py-4 flex items-center justify-between"
+                >
+                  <span className="text-[#a0a0a0] text-[10px] tracking-[0.15em] uppercase">
+                    {label}
+                  </span>
+                  <span className="font-mono text-sm text-[#00F2FF]">{value}</span>
+                </div>
+              ))}
+            </div>
+            <div className="px-6 py-4">
+              <Link
+                href={study.labUrl}
+                className="inline-flex items-center gap-2 text-[#00F2FF] text-[10px] tracking-[0.15em] uppercase hover:opacity-70 transition-opacity"
+              >
+                <FlaskConical size={12} />
+                View Security Intelligence Lab
+              </Link>
+            </div>
+          </div>
         )}
       </div>
     </div>
