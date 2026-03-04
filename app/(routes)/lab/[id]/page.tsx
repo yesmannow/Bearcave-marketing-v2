@@ -1,4 +1,4 @@
-import { Cpu, Package, GitBranch, Zap, AlertTriangle, Terminal } from "lucide-react";
+import { Cpu, Package, GitBranch, Zap, AlertTriangle, Terminal, BrainCircuit } from "lucide-react";
 import type { Metadata } from "next";
 import { getTool } from "./data";
 
@@ -110,6 +110,51 @@ export default async function LabItemPage({ params }: Props) {
               <pre className="overflow-x-auto px-6 py-6 text-xs font-mono leading-relaxed text-[#c0c0c0] whitespace-pre">
                 <code>{tool.codeSnippet.code}</code>
               </pre>
+            </div>
+          </section>
+        )}
+
+        {/* Model Training Visualization */}
+        {tool.modelTraining && (
+          <section>
+            <div className="flex items-center gap-3 mb-6">
+              <BrainCircuit size={16} className="text-[#00F2FF]" />
+              <h2 className="text-xs tracking-[0.3em] uppercase text-[#00F2FF]">
+                Model Training
+              </h2>
+              <span className="ml-auto font-mono text-[10px] text-[#3a3a3a] tracking-[0.1em] uppercase">
+                {tool.modelTraining.framework} · {tool.modelTraining.accuracy} accuracy
+              </span>
+            </div>
+            <div className="border border-[#1f1f1f] bg-[#040404]">
+              <div className="px-6 py-4 border-b border-[#1f1f1f] flex items-center justify-between">
+                <span className="text-[10px] tracking-[0.2em] uppercase text-[#a0a0a0]">
+                  Signal Weights — {tool.modelTraining.modelVersion}
+                </span>
+                <span className="font-mono text-[10px] text-emerald-400">
+                  ∑ = {tool.modelTraining.signals.reduce((s, x) => s + x.weight, 0).toFixed(2)}
+                </span>
+              </div>
+              <div className="flex flex-col gap-px bg-[#1a1a1a]">
+                {tool.modelTraining.signals.map(({ name, weight, description }) => (
+                  <div key={name} className="bg-[#040404] px-6 py-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs text-[#c0c0c0] font-mono">{name}</span>
+                      <span className="font-mono text-xs text-[#00F2FF]">
+                        {(weight * 100).toFixed(0)}%
+                      </span>
+                    </div>
+                    {/* Weight bar */}
+                    <div className="h-1.5 w-full bg-[#1f1f1f] mb-2">
+                      <div
+                        className="h-full bg-[#00F2FF]"
+                        style={{ width: `${weight * 100}%`, opacity: 0.7 + weight * 0.3 }}
+                      />
+                    </div>
+                    <p className="text-[10px] text-[#5a5a5a] leading-relaxed">{description}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </section>
         )}

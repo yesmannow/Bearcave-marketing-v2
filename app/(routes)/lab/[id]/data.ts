@@ -19,6 +19,13 @@ export type DiagramEdge = {
   style?: "solid" | "dashed";
 };
 
+export type ModelTrainingSignal = {
+  name: string;
+  /** TensorFlow weight applied to this signal (0–1) */
+  weight: number;
+  description: string;
+};
+
 export type Tool = {
   id: string;
   name: string;
@@ -39,6 +46,13 @@ export type Tool = {
   nodes: DiagramNode[];
   edges: DiagramEdge[];
   sandboxUrl: string | null;
+  /** Model Training visualization data — shows TensorFlow weight distribution */
+  modelTraining?: {
+    modelVersion: string;
+    framework: string;
+    accuracy: string;
+    signals: ModelTrainingSignal[];
+  };
 };
 
 const TOOLS: Partial<Record<string, Tool>> = {
@@ -324,6 +338,283 @@ async function syncProviderMetrics(profileId, ga4PropertyId) {
       { from: "node-run", to: "wp-rest",   label: "axios.post",   style: "solid"  },
       { from: "wp-rest",  to: "post-meta", label: "meta update",  style: "solid"  },
       { from: "post-meta",to: "dashboard", label: "inject data",  style: "solid"  },
+    ],
+    sandboxUrl: null,
+  },
+
+  "clinical-compass": {
+    id: "clinical-compass",
+    name: "Clinical Compass",
+    version: "v1.0.0",
+    status: "Production",
+    category: "AI / Observability",
+    tags: ["TensorFlow", "Kubernetes", "Datadog", "Anomaly Detection"],
+    summary:
+      "A TensorFlow-backed anomaly scoring model that monitors distributed infrastructure signals and predicts service degradation before thresholds are breached — resolving 94% of incidents automatically.",
+    logicBreakdown:
+      "The Clinical Compass ingests a continuous stream of infrastructure telemetry — CPU, memory, error rate, P95 latency, and request volume — and scores each signal against a trained weight matrix. When the composite score crosses a configurable risk threshold, the model fires an auto-remediation playbook: scaling up Kubernetes pods, flushing edge caches, or triggering an alert runbook, depending on the anomaly class.",
+    specs: [
+      { label: "Model",       value: "TensorFlow 2.x Sequential" },
+      { label: "Accuracy",    value: "94.2% (test set)" },
+      { label: "Latency",     value: "<8ms inference" },
+      { label: "Signals",     value: "6 weighted inputs" },
+      { label: "Infra",       value: "Kubernetes + Datadog" },
+      { label: "Retraining",  value: "Monthly cadence" },
+      { label: "Status",      value: "Production" },
+    ],
+    dependencies: [
+      { name: "tensorflow",           version: "^2.15.0", purpose: "Model training and inference" },
+      { name: "@datadog/datadog-api-client", version: "^1.18.0", purpose: "Real-time telemetry ingestion" },
+      { name: "kubernetes-client",    version: "^10.0.0", purpose: "Autoscaling API integration" },
+      { name: "zod",                  version: "^3.22.0", purpose: "Signal schema validation" },
+    ],
+    architecture: [
+      "Datadog metrics API feeds a 6-signal telemetry stream into the scoring pipeline every 30 seconds.",
+      "TensorFlow Sequential model applies learned weight matrix to the signal vector and outputs a risk score (0–1).",
+      "Risk score > 0.72 triggers auto-remediation: HPA scale-up, cache flush, or PagerDuty alert depending on anomaly class.",
+      "All scoring events written to a persistent audit log for model retraining and post-incident review.",
+    ],
+    knownLimitations: [
+      "Model accuracy degrades on traffic patterns outside the training distribution — requires monthly retraining.",
+      "Kubernetes HPA scale-up has a 90-second warm-up window; very rapid spikes may breach SLA before pods are ready.",
+    ],
+    codeSnippet: {
+      language: "typescript",
+      code: `// Clinical Compass — risk scoring pipeline
+import * as tf from "@tensorflow/tfjs-node";
+
+const WEIGHTS = [0.35, 0.25, 0.18, 0.12, 0.07, 0.03];
+const RISK_THRESHOLD = 0.72;
+
+export async function scoreSignals(signals: number[]): Promise<number> {
+  const input  = tf.tensor2d([signals]);
+  const result = model.predict(input) as tf.Tensor;
+  const score  = (await result.data())[0];
+  input.dispose();
+  result.dispose();
+  return score;
+}
+
+export async function evaluate(telemetry: TelemetrySnapshot) {
+  const signals = [
+    telemetry.cpuUsage,
+    telemetry.memoryUsage,
+    telemetry.errorRate,
+    telemetry.p95Latency,
+    telemetry.requestVolumeDelta,
+    telemetry.cacheHitRate,
+  ];
+  const score = await scoreSignals(signals);
+  if (score > RISK_THRESHOLD) {
+    await triggerRemediation(score, telemetry);
+  }
+  return { score, signals, threshold: RISK_THRESHOLD };
+}`,
+    },
+    nodes: [
+      { id: "datadog",   label: "Datadog",          sublabel: "Telemetry Source",        type: "source",  x: 60,  y: 60  },
+      { id: "pipeline",  label: "Signal Pipeline",   sublabel: "6-Feature Vector",        type: "process", x: 220, y: 60  },
+      { id: "tf-model",  label: "TF Model",          sublabel: "Sequential · Weights",    type: "process", x: 380, y: 60  },
+      { id: "risk-log",  label: "Audit Log",         sublabel: "Scoring History",         type: "store",   x: 60,  y: 170 },
+      { id: "threshold", label: "Risk Threshold",    sublabel: "0.72 cutoff",             type: "process", x: 220, y: 170 },
+      { id: "remediate", label: "Auto-Remediation",  sublabel: "HPA · Cache · Alert",     type: "output",  x: 380, y: 170 },
+    ],
+    edges: [
+      { from: "datadog",   to: "pipeline",  label: "30s poll",     style: "solid"  },
+      { from: "pipeline",  to: "tf-model",  label: "tensor2d",     style: "solid"  },
+      { from: "tf-model",  to: "threshold", label: "risk score",   style: "dashed" },
+      { from: "tf-model",  to: "risk-log",  label: "audit",        style: "dashed" },
+      { from: "threshold", to: "remediate", label: "> 0.72",       style: "solid"  },
+    ],
+    sandboxUrl: null,
+  },
+
+  "lead-score-lab": {
+    id: "lead-score-lab",
+    name: "Lead Score Lab",
+    version: "v1.0.0",
+    status: "Production",
+    category: "AI / ML",
+    tags: ["TensorFlow", "Python", "Lead Scoring", "CRM"],
+    summary:
+      "A TensorFlow-powered lead scoring engine that applies learned weight matrices to incoming CRM signals — surfacing high-intent prospects in real time so sales teams close faster with less noise.",
+    logicBreakdown:
+      "Each inbound lead triggers a feature extraction step that assembles a vector from six CRM signals: engagement recency, session depth, form completion rate, email open velocity, company size tier, and intent keyword density. A trained TensorFlow Dense model applies weight matrices learned from 18 months of closed-won/lost deal history to produce a 0–100 lead score. Scores above 72 are automatically tagged 'Hot' in the CRM and routed to the top-of-queue.",
+    specs: [
+      { label: "Model",         value: "TensorFlow 2.x Dense" },
+      { label: "Training Data", value: "18 months · 42k leads" },
+      { label: "Accuracy",      value: "91.4% (test set)" },
+      { label: "Inference",     value: "<12ms per lead" },
+      { label: "CRM Output",    value: "HubSpot / FluentCRM" },
+      { label: "Score Range",   value: "0 – 100" },
+      { label: "Hot Threshold", value: "72+" },
+      { label: "Status",        value: "Production" },
+    ],
+    dependencies: [
+      { name: "tensorflow",        version: "^2.15.0",  purpose: "Model training and inference" },
+      { name: "pandas",            version: "^2.1.0",   purpose: "Feature engineering pipeline" },
+      { name: "scikit-learn",      version: "^1.3.0",   purpose: "Preprocessing and evaluation" },
+      { name: "hubspot-api-client",version: "^8.0.0",   purpose: "CRM scoring output integration" },
+    ],
+    architecture: [
+      "CRM webhook delivers lead payload on form submission; feature extractor assembles a 6-signal vector.",
+      "TensorFlow Dense model (3 hidden layers, ReLU activations) applies trained weight matrices to predict deal probability.",
+      "Raw probability mapped to 0–100 score; scores ≥ 72 trigger 'Hot Lead' CRM tag and sales queue insertion.",
+      "All scoring events logged for continuous model retraining on a weekly cadence using latest closed-deal outcomes.",
+    ],
+    knownLimitations: [
+      "Model requires minimum 1,000 labelled leads per vertical for reliable weight calibration.",
+      "Score decay not yet implemented — leads scored >14 days ago are not automatically re-evaluated.",
+    ],
+    codeSnippet: {
+      language: "python",
+      code: `# Lead Score Lab — TensorFlow weight application
+import tensorflow as tf
+import numpy as np
+
+SIGNAL_WEIGHTS = {
+    "engagement_recency":     0.28,
+    "session_depth":          0.22,
+    "form_completion_rate":   0.18,
+    "email_open_velocity":    0.14,
+    "company_size_tier":      0.11,
+    "intent_keyword_density": 0.07,
+}
+HOT_THRESHOLD = 72
+
+def extract_features(lead: dict) -> np.ndarray:
+    return np.array([[
+        lead.get("engagement_recency", 0),
+        lead.get("session_depth", 0),
+        lead.get("form_completion_rate", 0),
+        lead.get("email_open_velocity", 0),
+        lead.get("company_size_tier", 0),
+        lead.get("intent_keyword_density", 0),
+    ]], dtype=np.float32)
+
+def score_lead(lead: dict, model: tf.keras.Model) -> dict:
+    features = extract_features(lead)
+    probability = float(model.predict(features, verbose=0)[0][0])
+    score = round(probability * 100)
+    return {
+        "score": score,
+        "tier": "hot" if score >= HOT_THRESHOLD else "warm" if score >= 45 else "cold",
+        "signals": {k: lead.get(k, 0) for k in SIGNAL_WEIGHTS},
+    }`,
+    },
+    nodes: [
+      { id: "crm-hook",  label: "CRM Webhook",      sublabel: "Lead Payload",            type: "source",  x: 60,  y: 60  },
+      { id: "extractor", label: "Feature Extractor", sublabel: "6-Signal Vector",         type: "process", x: 220, y: 60  },
+      { id: "tf-dense",  label: "TF Dense Model",    sublabel: "Weight Matrix · 3 Layers",type: "process", x: 380, y: 60  },
+      { id: "history",   label: "Deal History",      sublabel: "42k labelled leads",      type: "store",   x: 60,  y: 170 },
+      { id: "scorer",    label: "Score Mapper",      sublabel: "0–100 · Hot / Warm / Cold",type: "process",x: 220, y: 170 },
+      { id: "crm-out",   label: "CRM Output",        sublabel: "Tag · Queue · Alert",     type: "output",  x: 380, y: 170 },
+    ],
+    edges: [
+      { from: "crm-hook",  to: "extractor", label: "form event",   style: "solid"  },
+      { from: "extractor", to: "tf-dense",  label: "float32[]",    style: "solid"  },
+      { from: "history",   to: "tf-dense",  label: "train",        style: "dashed" },
+      { from: "tf-dense",  to: "scorer",    label: "probability",  style: "dashed" },
+      { from: "scorer",    to: "crm-out",   label: "score + tier", style: "solid"  },
+    ],
+    sandboxUrl: null,
+    modelTraining: {
+      modelVersion: "v1.0.0",
+      framework: "TensorFlow 2.x",
+      accuracy: "91.4%",
+      signals: [
+        { name: "Engagement Recency",     weight: 0.28, description: "Days since last meaningful interaction — recency is the strongest predictor of intent." },
+        { name: "Session Depth",          weight: 0.22, description: "Number of pages visited per session — depth signals research-mode buying behaviour." },
+        { name: "Form Completion Rate",   weight: 0.18, description: "Ratio of forms started to forms submitted — high completion correlates with commitment." },
+        { name: "Email Open Velocity",    weight: 0.14, description: "Opens per email sent over the last 30 days — velocity indicates active evaluation." },
+        { name: "Company Size Tier",      weight: 0.11, description: "ICP fit score based on headcount and revenue band — larger companies close at higher ACV." },
+        { name: "Intent Keyword Density", weight: 0.07, description: "Frequency of high-intent search terms in session referrals and on-site search queries." },
+      ],
+    },
+  },
+
+  "site-security-intelligence": {
+    id: "site-security-intelligence",
+    name: "Site Security Intelligence",
+    version: "v2.0.0",
+    status: "Production",
+    category: "Security / Infrastructure",
+    tags: ["Cloudflare WAF", "DNSSEC", "Zero-Trust", "TypeScript"],
+    summary:
+      "Real-time security telemetry pipeline that aggregates Cloudflare WAF events, DNSSEC validation logs, and origin pull metrics into a single intelligence dashboard — blocking 85k+ malicious threats monthly.",
+    logicBreakdown:
+      "The pipeline polls the Cloudflare Firewall Analytics API every 60 seconds, normalising raw event payloads into a structured threat schema. Events are classified by attack vector (SQLi, XSS, bot, DDoS), severity-scored, and written to a time-series store. A daily digest aggregates blocked threat counts, top attacker ASNs, and rule trigger frequency — surfacing the security posture metrics referenced in The Fortress case study.",
+    specs: [
+      { label: "Threats Blocked",  value: "85k+ /month" },
+      { label: "CPU Overhead",     value: "−40% post-deploy" },
+      { label: "Downtime",         value: "0% post-deploy" },
+      { label: "WAF Rule Sets",    value: "OWASP + Custom" },
+      { label: "Poll Interval",    value: "60s" },
+      { label: "DNSSEC",          value: "Enforced" },
+      { label: "Origin Pulls",     value: "Authenticated" },
+      { label: "Status",           value: "Production" },
+    ],
+    dependencies: [
+      { name: "cloudflare",            version: "^3.0.0",  purpose: "Firewall Analytics API client" },
+      { name: "node-cron",             version: "^3.0.3",  purpose: "60s polling scheduler" },
+      { name: "@influxdata/influxdb-client", version: "^1.33.2", purpose: "Time-series metrics store" },
+      { name: "zod",                   version: "^3.22.0", purpose: "Event schema validation" },
+    ],
+    architecture: [
+      "Cloudflare Firewall Analytics API polled every 60 seconds; raw events normalised to a typed threat schema.",
+      "Attack vectors classified (SQLi, XSS, bot, rate-limit, DDoS) and severity-scored for triage prioritisation.",
+      "Normalised events written to an InfluxDB time-series store for trend analysis and SLA reporting.",
+      "Daily digest aggregates blocked counts, top attacker ASNs, and rule trigger frequency into the security dashboard.",
+    ],
+    knownLimitations: [
+      "Cloudflare Analytics API has a 60-second data lag — real-time dashboard reflects near-real-time, not live.",
+      "InfluxDB retention policy set to 90 days; historical analysis beyond this window requires archive restore.",
+    ],
+    codeSnippet: {
+      language: "typescript",
+      code: `// Site Security Intelligence — WAF event ingestion
+import Cloudflare from "cloudflare";
+import { InfluxDB, Point } from "@influxdata/influxdb-client";
+
+const cf  = new Cloudflare({ apiToken: process.env.CF_API_TOKEN });
+const db  = new InfluxDB({ url: process.env.INFLUX_URL!, token: process.env.INFLUX_TOKEN });
+const writeApi = db.getWriteApi("bearcave", "security", "s");
+
+export async function ingestWafEvents(zoneId: string) {
+  const events = await cf.firewall.events.list({ zone_id: zoneId });
+  for (const evt of events.result ?? []) {
+    const point = new Point("waf_event")
+      .tag("action",     evt.action)
+      .tag("rule_id",    evt.matchedRuleId ?? "unknown")
+      .tag("attack_type", classifyVector(evt))
+      .floatField("severity", scoreSeverity(evt))
+      .timestamp(new Date(evt.occurredAt));
+    writeApi.writePoint(point);
+  }
+  await writeApi.flush();
+}
+
+function classifyVector(evt: WafEvent): string {
+  if (/sqli/i.test(evt.matchedRuleMessage ?? "")) return "sqli";
+  if (/xss/i.test(evt.matchedRuleMessage ?? ""))  return "xss";
+  if (evt.action === "block" && evt.clientRequestHTTPProtocol === "HTTP/1.0") return "bot";
+  return "other";
+}`,
+    },
+    nodes: [
+      { id: "cf-waf",   label: "Cloudflare WAF",    sublabel: "Firewall Analytics",      type: "source",  x: 60,  y: 60  },
+      { id: "ingestor", label: "Event Ingestor",     sublabel: "Normalise · Classify",    type: "process", x: 220, y: 60  },
+      { id: "influx",   label: "InfluxDB",           sublabel: "Time-Series Store",       type: "store",   x: 380, y: 60  },
+      { id: "dnssec",   label: "DNSSEC Logs",        sublabel: "Validation Events",       type: "source",  x: 60,  y: 170 },
+      { id: "digest",   label: "Daily Digest",       sublabel: "Aggregated Threat Intel", type: "process", x: 220, y: 170 },
+      { id: "dashboard",label: "Security Dashboard", sublabel: "85k+ Blocked / mo",       type: "output",  x: 380, y: 170 },
+    ],
+    edges: [
+      { from: "cf-waf",   to: "ingestor", label: "60s poll",     style: "solid"  },
+      { from: "ingestor", to: "influx",   label: "write point",  style: "solid"  },
+      { from: "dnssec",   to: "ingestor", label: "validate",     style: "dashed" },
+      { from: "influx",   to: "digest",   label: "aggregate",    style: "solid"  },
+      { from: "digest",   to: "dashboard",label: "daily report", style: "solid"  },
     ],
     sandboxUrl: null,
   },
