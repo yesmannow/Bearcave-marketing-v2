@@ -1,10 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { v2 as cloudinary } from 'cloudinary';
-import { CATEGORY_FOLDERS, type GalleryCategory, type CloudinarySearchResponse, type MixedMediaResource } from '@/app/types/cloudinary';
+import { CATEGORY_FOLDERS, type GalleryCategory, type CloudinaryResource, type CloudinarySearchResponse, type MixedMediaResource } from '@/app/types/cloudinary';
+
+// Subfolder slug → { work case study URL, human-readable project name }
+const SUBFOLDER_WORK_MAP: Record<string, { relatedWorkUrl: string; displayName: string }> = {
+  '317bbq':                    { relatedWorkUrl: '/work/317-bbq',                     displayName: '317 BBQ' },
+  'riley-bennett-egloff':      { relatedWorkUrl: '/work/riley-bennett-egloff',         displayName: 'Riley Bennett Egloff' },
+  'urgentcare-indy':           { relatedWorkUrl: '/work/urgent-care-indy',             displayName: 'Urgent Care Indy' },
+  'hoosierboy-barber-shop':    { relatedWorkUrl: '/work/hoosier-boy-barbershop',       displayName: 'Hoosierboy Barbershop' },
+  'tuohy-bailey-moore':        { relatedWorkUrl: '/work/tuohy-bailey-moore',           displayName: 'Tuohy Bailey & Moore' },
+  'primarycare-indy':          { relatedWorkUrl: '/work/primary-care-indy',            displayName: 'Primary Care Indy' },
+  'perpetual-movement-fitness':{ relatedWorkUrl: '/work/perpetual-movement',           displayName: 'Perpetual Movement Fitness' },
+  'taco-ninja':                { relatedWorkUrl: '/work/taco-ninja',                   displayName: 'Taco Ninja' },
+  'circle-city-kicks':         { relatedWorkUrl: '/work/circle-city-kicks',            displayName: 'Circle City Kicks' },
+  'behr-pet-essentials':       { relatedWorkUrl: '/work/behr-pet-essentials',          displayName: 'Behr Pet Essentials' },
+  'herbs-rub':                 { relatedWorkUrl: '/work/herbs-rub',                    displayName: "Herb's Rub" },
+  'clean-aesthetics':          { relatedWorkUrl: '/work/clean-aesthetics',             displayName: 'Clean Aesthetics' },
+  'primary-colours':           { relatedWorkUrl: '/work/primary-colours',              displayName: 'Primary Colours' },
+  'school-80-hoa':             { relatedWorkUrl: '/work/school-80-hoa',                displayName: 'School 80 HOA' },
+};
 
 function sanitizeResource(resource: MixedMediaResource): MixedMediaResource {
   const filename = resource.public_id.split('/').pop() || 'Artifact';
 
+  const anchorPattern = /^([a-z0-9-]+)-logo-anchor$/i;
   const unstructuredPatterns = /^(IMG_|VID_|PSX_|DSC_|DCIM_|MVI_|MOV_|PXL_|DJI_|Adobe_Post|\d{4}-\d{2}-\d{2}|\d{8}_\d{6})/i;
   const featuredPattern = /^featured-p-(\d+)$/i;
   const featuredGdPattern = /^featured-gd-(\d+)$/i;
@@ -15,6 +34,28 @@ function sanitizeResource(resource: MixedMediaResource): MixedMediaResource {
 
   const featuredMatch = filename.match(featuredPattern);
   const featuredGdMatch = filename.match(featuredGdPattern);
+  const anchorMatch = filename.match(anchorPattern);
+
+  // Anchor asset: canonical logo with -logo-anchor suffix
+  if (anchorMatch) {
+    const anchorSlug = anchorMatch[1];
+    // Prefer projectSlug (from asset_folder metadata) for accurate subfolder lookup;
+    // fall back to the abbreviated slug in the public_id only if no folder info present.
+    const subfolderSlug = resource.projectSlug || '';
+    const subWork = SUBFOLDER_WORK_MAP[subfolderSlug] || SUBFOLDER_WORK_MAP[anchorSlug];
+    displayTitle = subWork
+      ? `${subWork.displayName} \u2014 Brand Mark`
+      : `${anchorSlug.replace(/-/g, ' ')} \u2014 Brand Mark`;
+    altText = `${displayTitle} logo`;
+    if (subWork) relatedWorkUrl = subWork.relatedWorkUrl;
+    return {
+      ...resource,
+      display_name: displayTitle,
+      isAnchor: true,
+      relatedWorkUrl,
+      context: { ...resource.context, custom: { ...resource.context?.custom, alt: altText, caption: displayTitle } },
+    };
+  }
 
   // Mapping specific featured-gd assets to titles and case studies
   if (featuredGdMatch) {
@@ -32,6 +73,24 @@ function sanitizeResource(resource: MixedMediaResource): MixedMediaResource {
       displayTitle = `Systems Artifact ${num.padStart(2, '0')}`;
     }
     altText = `${displayTitle} - Graphic Design System`;
+  }
+
+  // Named asset overrides — match known filenames before falling back to generic logic
+  const fnLower = filename.toLowerCase();
+  if (!displayTitle && !resource.context?.custom?.caption) {
+    if (fnLower.includes('indy_bicentenial') || fnLower.includes('indy_bicentennial') || fnLower.includes('bicentenn')) {
+      displayTitle = 'Indy Bicentennial Identity';
+      altText = 'Indy Bicentennial Identity - Brand System';
+      if (!relatedWorkUrl) relatedWorkUrl = '/work/brand-authority-rebuild';
+    } else if ((fnLower.includes('day_at_the_track') || fnLower.includes('day_at_track') || fnLower.includes('2001_day')) && !displayTitle) {
+      displayTitle = 'Day at the Track';
+      altText = 'Day at the Track - Event Brand System';
+      if (!relatedWorkUrl) relatedWorkUrl = '/work/conversion-architecture';
+    } else if ((fnLower.includes('health_care') || fnLower.includes('healthcare')) && fnLower.includes('ad')) {
+      displayTitle = 'Healthcare Identity';
+      altText = 'Healthcare Identity System';
+      if (!relatedWorkUrl) relatedWorkUrl = '/work/urgent-care-indy';
+    }
   }
 
   if (resource.context?.custom?.caption) {
@@ -54,17 +113,24 @@ function sanitizeResource(resource: MixedMediaResource): MixedMediaResource {
     }
   }
 
-  // Detect project association for proof folder
-  let workId: string | undefined;
-  if (resource.public_id.includes('studio/proof')) {
-    if (filename.toLowerCase().includes('fortress')) {
-      workId = 'the-fortress';
-    } else if (filename.toLowerCase().includes('aurora')) {
-      workId = 'aurora-framework';
-    } else if (filename.toLowerCase().includes('nexus')) {
-      workId = 'nexus-dashboard';
+  // Relational case study links — triggered by slug patterns anywhere in public_id
+  const pid = resource.public_id.toLowerCase();
+  if (!relatedWorkUrl) {
+    if (pid.includes('317-bbq') || pid.includes('317bbq')) {
+      relatedWorkUrl = '/work/brand-authority-rebuild';
+    } else if (pid.includes('ultimate_tech') || pid.includes('ultimate-tech') || pid.includes('ultimate_technologies')) {
+      relatedWorkUrl = '/work/revenue-acceleration';
+    } else if (pid.includes('urgent_care') || pid.includes('urgent-care') || pid.includes('urgentcare')) {
+      relatedWorkUrl = '/work/urgent-care-indy';
+    } else if (pid.includes('hoosierboy') || pid.includes('hoosier-boy') || pid.includes('hoosier_boy')) {
+      relatedWorkUrl = '/work/hoosier-boy-barbershop';
+    } else if (pid.includes('russell') && pid.includes('paint')) {
+      relatedWorkUrl = '/work/russell-painting';
     }
   }
+
+  // Legacy workId kept for backwards compatibility
+  const workId: string | undefined = undefined;
 
   return {
     ...resource,
@@ -134,9 +200,9 @@ export async function GET(request: NextRequest) {
     console.log(`🔎 Searching folder: ${folderPath}`);
 
     const result = await cloudinary.search
-      .expression(`folder:${folderPath}/* AND (resource_type:image OR resource_type:video) NOT public_id:*bio-featured-*`)
+      .expression(`folder:${folderPath}/* AND (resource_type:image OR resource_type:video)`)
       .sort_by('created_at', 'desc')
-      .max_results(50)
+      .max_results(500)
       .with_field('context')
       .with_field('tags')
       .execute() as CloudinarySearchResponse;
@@ -144,7 +210,10 @@ export async function GET(request: NextRequest) {
     console.log(`✅ Found ${result.total_count} resources in ${folderPath}`);
 
     const mixedMediaResources: MixedMediaResource[] = result.resources
-      .filter(resource => resource.resource_type === 'image' || resource.resource_type === 'video')
+      .filter(resource =>
+        (resource.resource_type === 'image' || resource.resource_type === 'video') &&
+        !resource.public_id.includes('bio-featured-')
+      )
       .map(resource => {
         let blurDataURL: string | undefined;
         if (resource.resource_type === 'image') {
@@ -156,6 +225,11 @@ export async function GET(request: NextRequest) {
             fetch_format: 'auto',
           });
         }
+
+        // Derive project slug from asset_folder metadata (dynamic folder mode)
+        const assetFolder: string = (resource as CloudinaryResource & { asset_folder?: string }).asset_folder || '';
+        const folderSlug = assetFolder.split('/').pop() || '';
+        const subWork = SUBFOLDER_WORK_MAP[folderSlug];
 
         const baseResource: MixedMediaResource = {
           public_id: resource.public_id,
@@ -169,11 +243,23 @@ export async function GET(request: NextRequest) {
           colors: resource.colors,
           tags: resource.tags,
           blurDataURL,
+          projectSlug: folderSlug || undefined,
         };
 
-        return sanitizeResource(baseResource);
+        const sanitized = sanitizeResource(baseResource);
+
+        // Apply subfolder-derived relatedWorkUrl if sanitizeResource didn't set one
+        if (subWork && !sanitized.relatedWorkUrl) {
+          sanitized.relatedWorkUrl = subWork.relatedWorkUrl;
+        }
+
+        return sanitized;
       })
       .sort((a, b) => {
+        // Anchor assets always sort first (canonical brand marks)
+        if (a.isAnchor && !b.isAnchor) return -1;
+        if (!a.isAnchor && b.isAnchor) return 1;
+
         const aFilename = a.public_id.split('/').pop() || '';
         const bFilename = b.public_id.split('/').pop() || '';
 

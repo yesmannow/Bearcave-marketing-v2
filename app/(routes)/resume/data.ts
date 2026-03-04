@@ -71,7 +71,7 @@ export const TIMELINE: TimelineEntry[] = [
     title: "Marketing Director",
     org: "Graston Technique, LLC",
     location: "Indianapolis, IN",
-    duration: "Aug 2023 — Present",
+    duration: "Aug 2023 — Dec 2025",
     description:
       "Leads both marketing strategy and technical execution for a high-volume educational platform serving thousands of clinicians with continuing education and clinical tools.",
     highlights: [
@@ -277,37 +277,68 @@ export const SKILL_BENTO: SkillCategory[] = [
     skills: ["Full-Stack Web Development (WordPress, JavaScript, React)", "Marketing Technology Integration", "Serverless Development (Cloudflare Workers)", "API Development & System Integration"],
   },
   {
-    title: "Tools & Platforms",
-    icon: "🛠️",
-    skills: ["WordPress", "JavaScript", "React", "HubSpot", "FluentCRM", "WP Fusion", "LearnDash", "WooCommerce", "Google Analytics", "Google Tag Manager", "Mapbox", "Cloudflare Workers", "Cloudflare CDN", "WP Rocket", "LiteSpeed", "ACF Pro", "FacetWP", "Figma", "Adobe Creative Suite", "Canva", "Photoshop"],
+    title: "Growth & Ops Stack",
+    icon: "�",
+    skills: ["HubSpot", "FluentCRM", "WP Fusion", "LearnDash", "WooCommerce", "Google Analytics", "Google Tag Manager"],
+  },
+  {
+    title: "Engineering & Creative Suite",
+    icon: "💻",
+    skills: ["WordPress", "JavaScript", "React", "Cloudflare Workers", "Cloudflare CDN", "WP Rocket", "LiteSpeed", "Mapbox", "Figma", "Adobe Creative Suite", "Canva", "Photoshop"],
   },
 ];
 
 // ── Testimonials ─────────────────────────────────────────────────────────────
 export const TESTIMONIALS: Testimonial[] = [
   {
-    quote:
-      "The systems he builds don't just perform — they compound. Our pipeline has been on autopilot for six months and it just keeps improving.",
     author: "Jesse Wey",
-    role: "Founder",
+    role: "Oct 2025",
+    quote: "Jacob has a great balance of strategic thinking and hands-on execution... I’d recommend him to anyone looking for a marketing professional who’s both forward-thinking and results-oriented.",
   },
   {
-    quote:
-      "Rare combination of true strategic vision and the technical ability to actually build it. Most people are one or the other.",
     author: "Andrew Bastnagel",
-    role: "CEO",
+    role: "Oct 2025",
+    quote: "Jacob is the kind of marketer who makes an immediate impact... figuring out how to put new technologies to work in practical ways.",
   },
   {
-    quote:
-      "He delivered a full infrastructure overhaul in a fraction of the time any agency quoted us. The quality was superior, too.",
+    author: "Jerry Stern",
+    role: "Aug 2020",
+    quote: "Very competent and professional... if he said something, you could count on it.",
+  },
+  {
     author: "Kevin Martin See",
-    role: "COO",
+    role: "Oct 2014",
+    quote: "Exuberance and moxie are unparalleled... ability to implement strategies that produce a positive ROI.",
   },
   {
-    quote:
-      "Our marketing finally feels like a machine. Every asset, every workflow, every metric — it all connects.",
+    author: "Nick Brown",
+    role: "Oct 2013",
+    quote: "Hardworking, creative and a pleasure to work with.",
+  },
+  {
+    author: "Terrence L. Black",
+    role: "Apr 2013",
+    quote: "Focused and engaged... energy and enthusiasm stand out.",
+  },
+  {
+    author: "Kara Lynch",
+    role: "Mar 2013",
+    quote: "Wonderful eye for marketing... consistently finding new ways to get exposure.",
+  },
+  {
+    author: "Clayton Mathews",
+    role: "Feb 2013",
+    quote: "Loyal to those he surrounds himself with... full-heartedly recommend.",
+  },
+  {
+    author: "Jared Duymovic",
+    role: "Feb 2013",
+    quote: "Exceedingly willing to get the job done... represented his company admirably.",
+  },
+  {
     author: "Ben Worrell",
-    role: "VP Marketing",
+    role: "Oct 2009",
+    quote: "Energy and ingenuity are extremely valuable assets... expanded our vision.",
   },
 ];
 

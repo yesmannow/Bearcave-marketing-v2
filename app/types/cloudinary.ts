@@ -20,6 +20,7 @@ export interface CloudinaryResource {
     };
   };
   colors?: Array<[string, number]>;
+  asset_folder?: string;
 }
 
 export interface MixedMediaResource {
@@ -35,6 +36,10 @@ export interface MixedMediaResource {
   tags?: string[];
   workId?: string;
   relatedWorkUrl?: string;
+  projectSlug?: string;
+  isAnchor?: boolean;
+  identityRole?: 'hero' | 'resume' | 'signature' | 'parallax';
+  identityPage?: string;
   context?: {
     custom?: {
       alt?: string;

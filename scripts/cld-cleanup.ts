@@ -35,6 +35,21 @@ interface RenameOperation {
   reason: string;
 }
 
+// Pattern for Cloudinary-appended random suffixes, e.g. 317-bbq-logo_lcuh6w
+const CLOUDINARY_SUFFIX_PATTERN = /_[a-z0-9]{6}$/i;
+
+function hasCloudinarySuffix(filename: string): boolean {
+  return CLOUDINARY_SUFFIX_PATTERN.test(filename);
+}
+
+function stripCloudinarySuffix(publicId: string): string {
+  const lastSlashIndex = publicId.lastIndexOf('/');
+  const folder = lastSlashIndex !== -1 ? publicId.substring(0, lastSlashIndex) : '';
+  const filename = lastSlashIndex !== -1 ? publicId.substring(lastSlashIndex + 1) : publicId;
+  const cleanFilename = filename.replace(CLOUDINARY_SUFFIX_PATTERN, '');
+  return folder ? `${folder}/${cleanFilename}` : cleanFilename;
+}
+
 const UNSTRUCTURED_PATTERNS = [
   /^IMG_/i,
   /^VID_/i,
@@ -119,7 +134,18 @@ async function scanFolder(folderPath: string): Promise<RenameOperation[]> {
         }
       }
 
-      if (isUnstructured(filename)) {
+      if (hasCloudinarySuffix(filename) && !isUnstructured(filename)) {
+        // Strip the trailing random suffix from otherwise-clean filenames
+        const newPublicId = stripCloudinarySuffix(resource.public_id);
+        if (newPublicId !== resource.public_id) {
+          operations.push({
+            oldPublicId: resource.public_id,
+            newPublicId,
+            resourceType,
+            reason: `Trailing Cloudinary suffix: ${filename}`,
+          });
+        }
+      } else if (isUnstructured(filename)) {
         const category = folderPath.split('/').pop() || 'studio';
         const index = resourceType === 'video' ? videoCounter++ : imageCounter++;
         const newPublicId = generateCleanName(resource.public_id, resourceType, index, category);

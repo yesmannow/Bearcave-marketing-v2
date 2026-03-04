@@ -27,7 +27,7 @@ html {
 
 body {
   background: var(--background);
-  color: var(--foreground);
+  color: #EDEDED;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -51,4 +51,41 @@ h3 {
 .border-glow {
   border-color: #00F2FF;
   box-shadow: 0 0 10px #00F2FF33;
+}
+
+/* Sale banner shimmer — simulates live e-commerce environment */
+@keyframes shimmer-sweep {
+  0%   { transform: translateX(-100%) skewX(-12deg); }
+  100% { transform: translateX(250%) skewX(-12deg); }
+}
+
+.shimmer-banner::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.18) 50%,
+    transparent 70%
+  );
+  animation: shimmer-sweep 2.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Ocean Pearl Design System Utilities */
+.ocean-pearl-glass {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.pearl-interact {
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.pearl-interact:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(255, 165, 0, 0.15); /* Strategic Orange soft glow */
 }

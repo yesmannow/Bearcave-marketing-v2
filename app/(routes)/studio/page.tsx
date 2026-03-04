@@ -28,6 +28,30 @@ interface GalleryResponse {
   error?: string;
 }
 
+// Per-project accent colors — badge color overrides for non-teal projects
+const PROJECT_ACCENTS: Record<string, string> = {
+  'tuohy-bailey-moore':    '#D4AF37', // Gold / Champagne
+  'circle-city-kicks':     '#E63946', // Street Crimson
+  'behr-pet-essentials':   '#8ECAE6', // Sky Blue / Organic
+  'clean-aesthetics':      '#C8A2C8', // Soft Lilac / Beauty
+  'hoosierboy-barber-shop':'#B22222', // Classic Barber Pole Red
+  'taco-ninja':            '#FFB800', // Taco Gold / Warning Yellow
+  'primarycare-indy':      '#0077B6', // Medical Professional Blue
+  'piko-project':          '#00D4FF', // Electric Cyan / Workstation Blue
+};
+const DEFAULT_ACCENT = '#40E0D0';
+
+function getProjectAccent(projectSlug?: string): string {
+  return (projectSlug && PROJECT_ACCENTS[projectSlug]) || DEFAULT_ACCENT;
+}
+
+// Cinematic signal badge text for drone / motion videos
+const UPLINK_SIGNAL = 'UPLINK: ACTIVE // 4K SIGNAL';
+function isDroneVideo(publicId: string): boolean {
+  const f = publicId.toLowerCase();
+  return f.includes('photography-motion') || f.includes('dji_') || f.includes('graphic-design-motion');
+}
+
 // Custom hook to detect if the mouse is hovering over the featured showcase
 const useFeaturedHover = () => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
@@ -48,7 +72,7 @@ const FeaturedGrid = ({ featuredItems }: { featuredItems: MixedMediaResource[] }
       case 0: return "md:col-span-2 md:row-span-2 min-h-[400px] md:min-h-[600px]"; // The Anchor
       case 1: return "md:col-span-1 md:row-span-1 min-h-[250px] md:min-h-[300px]"; // Vertical 1
       case 2: return "md:col-span-1 md:row-span-1 min-h-[250px] md:min-h-[300px]"; // Vertical 2
-      case 3: return "md:col-span-2 md:row-span-1 min-h-[250px] md:min-h-[300px]"; // The Panorama
+      case 3: return "md:col-span-4 md:row-span-1 min-h-[250px] md:min-h-[400px]"; // The Panorama (Full Width)
       case 4: return "md:col-span-1 md:row-span-1 min-h-[250px] md:min-h-[300px]"; // Detail Square 1
       case 5: return "md:col-span-1 md:row-span-1 min-h-[250px] md:min-h-[300px]"; // Detail Square 2
       default: return "md:col-span-1 md:row-span-1 min-h-[250px] md:min-h-[300px]";
@@ -64,11 +88,13 @@ const FeaturedGrid = ({ featuredItems }: { featuredItems: MixedMediaResource[] }
         <div className="flex-1 h-px bg-linear-to-r from-[#40E0D0]/30 to-transparent" />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 auto-rows-min">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 auto-rows-min grid-flow-dense">
         {items.map((resource, index) => {
           const isHovered = hoveredIndex === index;
           const isOtherHovered = hoveredIndex !== null && hoveredIndex !== index;
-          const optimizedUrl = resource.secure_url; // It's photography, no video optimization needed here typically
+          const optimizedUrl = resource.resource_type === 'video'
+                ? resource.secure_url.replace('/upload/', '/upload/f_auto,q_auto/')
+                : resource.secure_url;
 
           return (
             <div
@@ -79,32 +105,53 @@ const FeaturedGrid = ({ featuredItems }: { featuredItems: MixedMediaResource[] }
               onMouseEnter={() => setHoveredIndex(index)}
               onMouseLeave={() => setHoveredIndex(null)}
             >
-              {/* Image Container */}
+              {/* Media Container */}
               <div className="absolute inset-0">
-                <Image
-                  src={optimizedUrl}
-                  alt={resource.context?.custom?.alt || resource.display_name || "Featured artifact"}
-                  fill
-                  priority={true} // High-priority loading for LCP
-                  className={`object-cover transition-transform duration-1000 ease-out ${
-                    isHovered ? "scale-105" : "scale-100"
-                  }`}
-                  sizes={index === 0 ? "(max-width: 768px) 100vw, 50vw" : "(max-width: 768px) 100vw, 25vw"}
-                  placeholder={resource.blurDataURL ? "blur" : "empty"}
-                  blurDataURL={resource.blurDataURL}
-                />
+                {resource.resource_type === 'video' ? (
+                  <>
+                    <video
+                      src={optimizedUrl}
+                      className={`w-full h-full object-cover transition-transform duration-1000 ease-out ${isHovered ? "scale-105" : "scale-100"}`}
+                      muted
+                      loop
+                      playsInline
+                      autoPlay
+                    />
+                    {resource.duration && (
+                      <div className="absolute top-4 right-4 bg-black/70 backdrop-blur-md px-3 py-1.5 rounded-md border border-[#40E0D0]/30 z-20">
+                        <p className="text-[#40E0D0] text-xs font-mono font-bold tracking-wider">
+                          0:{String(Math.floor(resource.duration)).padStart(2, '0')}s
+                        </p>
+                      </div>
+                    )}
+                    {isDroneVideo(resource.public_id) && (
+                      <div className="absolute bottom-4 left-4 z-20 pointer-events-none">
+                        <p className="text-[#40E0D0]/60 text-[9px] font-mono tracking-[0.2em] uppercase">{UPLINK_SIGNAL}</p>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <Image
+                    src={optimizedUrl}
+                    alt={resource.context?.custom?.alt || resource.display_name || "Featured photography"}
+                    fill
+                    priority={true}
+                    className={`object-cover transition-transform duration-1000 ease-out ${isHovered ? "scale-105" : "scale-100"}`}
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    placeholder={resource.blurDataURL ? "blur" : "empty"}
+                    blurDataURL={resource.blurDataURL}
+                  />
+                )}
 
-                {/* Holographic Overlay on Hover */}
-                <div className={`absolute inset-0 bg-linear-to-br from-[#40E0D0]/0 via-[#40E0D0]/5 to-[#40E0D0]/20 transition-opacity duration-500 pointer-events-none z-10 ${
-                  isHovered ? "opacity-100" : "opacity-0"
-                }`} />
+                {/* Aperture Focus Gradient */}
+                <div className={`absolute inset-0 bg-linear-to-t from-black/80 via-transparent to-transparent transition-opacity duration-500 pointer-events-none z-10`} />
               </div>
 
-              {/* Ocean Pearl Accent Border */}
-              <div className={`absolute inset-0 border-2 transition-all duration-500 rounded-lg pointer-events-none z-30 ${
+              {/* Teal Inner Glow Accent */}
+              <div className={`absolute inset-0 border border-white/5 transition-all duration-500 rounded-lg pointer-events-none z-30 ${
                 isHovered
-                  ? 'border-[#40E0D0]/40 shadow-[0_0_30px_rgba(64,224,208,0.2)]'
-                  : 'border-[#40E0D0]/0'
+                  ? 'border-[#40E0D0]/50 shadow-[inset_0_0_40px_rgba(64,224,208,0.15)]'
+                  : ''
               }`} />
 
               {/* Metadata Overlay */}
@@ -176,7 +223,7 @@ const DesignShowcase = ({ featuredItems }: { featuredItems: MixedMediaResource[]
               key={resource.public_id}
               className={`relative group overflow-hidden rounded-lg border border-[#1f1f1f] bg-[#1a1f35] transition-all duration-700 ease-out cursor-pointer ${getGridClasses(index)} ${
                 isOtherHovered ? "grayscale-50 opacity-60 scale-[0.98]" : "grayscale-0 opacity-100 scale-100"
-              }`}
+              } ${isHovered ? "-translate-y-1" : "translate-y-0"}`}
               onMouseEnter={() => setHoveredIndex(index)}
               onMouseLeave={() => setHoveredIndex(null)}
             >
@@ -197,6 +244,11 @@ const DesignShowcase = ({ featuredItems }: { featuredItems: MixedMediaResource[]
                         <p className="text-[#40E0D0] text-xs font-mono font-bold tracking-wider">
                           0:{String(Math.floor(resource.duration)).padStart(2, '0')}s
                         </p>
+                      </div>
+                    )}
+                    {isDroneVideo(resource.public_id) && (
+                      <div className="absolute bottom-4 left-4 z-20 pointer-events-none">
+                        <p className="text-[#40E0D0]/60 text-[9px] font-mono tracking-[0.2em] uppercase">{UPLINK_SIGNAL}</p>
                       </div>
                     )}
                   </>
@@ -301,9 +353,17 @@ export default function StudioPage() {
     fetchGallery();
   }, [activeCategory]);
 
-  const featuredItems = resources.filter(r => r.public_id.includes('featured-p-'));
-  const featuredGdItems = resources.filter(r => r.public_id.includes('featured-gd-'));
-  const standardItems = resources.filter(r => !r.public_id.includes('featured-p-') && !r.public_id.includes('featured-gd-'));
+  // Prefer curated featured-p-* assets; fall back to top-6 for the Aperture hero grid
+  const curatedP = resources.filter(r => r.public_id.includes('featured-p-'));
+  const featuredItems = curatedP.length > 0 ? curatedP : resources.slice(0, 6);
+
+  // Prefer curated featured-gd-* assets; fall back to top-8 for the Design Showcase
+  const curatedGd = resources.filter(r => r.public_id.includes('featured-gd-'));
+  const featuredGdItems = curatedGd.length > 0 ? curatedGd : resources.slice(0, 8);
+
+  // Standard masonry grid: exclude whichever items were promoted to hero/showcase
+  const promotedIds = new Set([...featuredItems, ...featuredGdItems].map(r => r.public_id));
+  const standardItems = resources.filter(r => !promotedIds.has(r.public_id));
 
   return (
     <div className="min-h-screen bg-[#0f172a] relative">
@@ -449,7 +509,7 @@ export default function StudioPage() {
                     transitionSpeed={400}
                     gyroscope={true}
                   >
-                    <div className="relative group overflow-hidden rounded-lg border border-[#1f1f1f] bg-[#1a1f35]">
+                    <div className="relative group overflow-hidden rounded-lg border border-[#1f1f1f] bg-[#1a1f35] transition-all duration-500 hover:border-[#40E0D0]/50 hover:shadow-[0_0_40px_rgba(64,224,208,0.15)] hover:-translate-y-1">
                       {/* Image Container */}
                       <div
                         className="relative overflow-hidden"
@@ -478,6 +538,11 @@ export default function StudioPage() {
                                 </p>
                               </div>
                             )}
+                            {isDroneVideo(resource.public_id) && (
+                              <div className="absolute bottom-3 left-3 z-20 pointer-events-none">
+                                <p className="text-[#40E0D0]/60 text-[9px] font-mono tracking-[0.2em] uppercase">{UPLINK_SIGNAL}</p>
+                              </div>
+                            )}
                           </>
                         ) : (
                           <Image
@@ -496,28 +561,47 @@ export default function StudioPage() {
                       </div>
 
                       {/* Metadata Overlay */}
-                      {(resource.context?.custom?.caption || resource.display_name || resource.workId) && (
+                      {(resource.context?.custom?.caption || resource.display_name || resource.workId || resource.isAnchor) && (
                         <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/90 via-black/50 to-transparent p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20 flex flex-col justify-end">
                           <div className="flex justify-between items-end gap-4">
                             <div>
                               <p className="text-white text-sm font-bold tracking-wide">
                                 {resource.context?.custom?.caption || resource.display_name}
                               </p>
-                              {resource.tags?.includes('featured') && (
+                              {resource.isAnchor ? (
+                                <span
+                                  className="inline-flex items-center gap-1 mt-2 text-[10px] uppercase tracking-widest px-2 py-0.5"
+                                  style={{
+                                    color: getProjectAccent(resource.projectSlug),
+                                    border: `1px solid ${getProjectAccent(resource.projectSlug)}60`,
+                                    background: `${getProjectAccent(resource.projectSlug)}18`,
+                                  }}
+                                >
+                                  <span
+                                    className="w-1.5 h-1.5 rounded-full animate-pulse"
+                                    style={{ background: getProjectAccent(resource.projectSlug) }}
+                                  />
+                                  Primary Mark
+                                </span>
+                              ) : resource.tags?.includes('featured') ? (
                                 <span className="inline-block mt-2 text-[10px] uppercase tracking-widest text-[#40E0D0] border border-[#40E0D0]/30 bg-[#40E0D0]/10 px-2 py-0.5 rounded-full">
                                   Featured
                                 </span>
-                              )}
+                              ) : resource.projectSlug ? (
+                                <span className="inline-block mt-2 text-[10px] uppercase tracking-widest text-[#a0a0a0] border border-[#3a3a3a] px-2 py-0.5">
+                                  {resource.projectSlug}
+                                </span>
+                              ) : null}
                             </div>
 
-                            {/* Evidence Links / View Case Study Button */}
-                            {resource.workId && (
+                            {/* View Strategy — fires on relatedWorkUrl or legacy workId */}
+                            {(resource.relatedWorkUrl || resource.workId) && (
                               <a
-                                href={`/work/${resource.workId}`}
-                                className="shrink-0 flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-white hover:text-[#40E0D0] bg-white/10 hover:bg-white/20 backdrop-blur-md px-3 py-1.5 rounded-full transition-all border border-white/10"
+                                href={resource.relatedWorkUrl || `/work/${resource.workId}`}
+                                className="shrink-0 flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-[#40E0D0] hover:text-white bg-[#40E0D0]/10 hover:bg-[#40E0D0]/20 backdrop-blur-md px-3 py-1.5 rounded-full transition-all border border-[#40E0D0]/30 hover:border-[#40E0D0]/60"
                                 onClick={(e) => e.stopPropagation()}
                               >
-                                View Case Study
+                                View Strategy
                                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                   <line x1="5" y1="12" x2="19" y2="12"></line>
                                   <polyline points="12 5 19 12 12 19"></polyline>

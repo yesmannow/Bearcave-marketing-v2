@@ -4,7 +4,7 @@ import { Playfair_Display } from "next/font/google";
 import "./globals.css";
 import Header from "./components/Header";
 import LenisProvider from "./components/LenisProvider";
-import TelemetryHUD from "./components/TelemetryHUD";
+import SystemHUD from "./components/SystemHUD";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -86,7 +86,7 @@ export default function RootLayout({
         <LenisProvider>
           <Header />
           <main className="pt-16">{children}</main>
-          <TelemetryHUD />
+          <SystemHUD />
         </LenisProvider>
       </body>
     </html>

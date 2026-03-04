@@ -14,6 +14,7 @@ type Project = {
   client: string;
   year: string;
   tags: string[];
+  logoUrl?: string;
   // CMO lens
   roi: string;
   roiLabel: string;
@@ -54,6 +55,7 @@ const CMO_PROJECTS: Project[] = [
     client: "SaaS Scale-Up",
     year: "2025",
     tags: ["Strategy", "Systems", "Growth"],
+    logoUrl: "https://res.cloudinary.com/djhqowk67/image/upload/f_auto,q_auto/v1/studio/proof/ultimate_technologies_logo",
     roi: "+340%",
     roiLabel: "Revenue Lift",
     techStack: ["HubSpot", "Segment", "Looker"],
@@ -256,10 +258,14 @@ export default function WorkLens() {
 
   return (
     <div ref={containerRef} className="min-h-screen px-6 md:px-12 py-16 relative overflow-hidden">
-      {/* Parallax Bio Background */}
+      {/* Parallax Bio Background — bio-featured-4, 5% opacity, masked at edges */}
       <motion.div
         className="fixed inset-0 z-0 pointer-events-none opacity-5 mix-blend-screen grayscale"
-        style={{ y }}
+        style={{
+          y,
+          maskImage: "radial-gradient(ellipse 80% 60% at 50% 40%, black 30%, transparent 80%)",
+          WebkitMaskImage: "radial-gradient(ellipse 80% 60% at 50% 40%, black 30%, transparent 80%)",
+        }}
       >
         <Image
           src="https://res.cloudinary.com/djhqowk67/image/upload/f_auto,q_auto/v1/studio/photography/bio-featured-4"
@@ -333,7 +339,7 @@ export default function WorkLens() {
           className="flex flex-col gap-px bg-[#1f1f1f]"
         >
           {config.projects.map(
-            ({ id, title, client, year, tags, roi, roiLabel, techStack, techHighlight, techHighlightLabel }) => {
+            ({ id, title, client, year, tags, logoUrl, roi, roiLabel, techStack, techHighlight, techHighlightLabel }) => {
               const metric = lens === "cmo" ? roi : techHighlight;
               const metricLabel = lens === "cmo" ? roiLabel : techHighlightLabel;
 
@@ -344,6 +350,19 @@ export default function WorkLens() {
                   className="group bg-black px-8 py-10 grid grid-cols-1 md:grid-cols-[1fr_auto] gap-6 items-center hover:bg-[#0a0a0a] transition-colors"
                 >
                   <div>
+                    {logoUrl && (
+                      <div className="mb-5 flex items-center">
+                        <div className="relative h-10 w-40 opacity-60 group-hover:opacity-100 transition-opacity duration-500 grayscale group-hover:grayscale-0">
+                          <Image
+                            src={logoUrl}
+                            alt={`${client} logo`}
+                            fill
+                            className="object-contain object-left"
+                            sizes="160px"
+                          />
+                        </div>
+                      </div>
+                    )}
                     <div className="flex flex-wrap gap-2 mb-4">
                       {tags.map((tag) => (
                         <span
@@ -357,7 +376,7 @@ export default function WorkLens() {
                     <h2 className="font-serif text-xl md:text-2xl font-bold mb-2 group-hover:text-[#00F2FF] transition-colors">
                       {title}
                     </h2>
-                    <p className="text-[#a0a0a0] text-xs tracking-[0.1em] uppercase">
+                    <p className="text-[#a0a0a0] text-xs tracking-widest uppercase">
                       {client} · {year}
                     </p>
 
