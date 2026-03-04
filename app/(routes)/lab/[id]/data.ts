@@ -1,3 +1,5 @@
+import { LAB_APPLICATIONS } from "../applications";
+
 export type NodeType = "source" | "process" | "store" | "output";
 
 export type DiagramNode = {
@@ -201,6 +203,168 @@ function get_student_context_for_ai($user_id) {
       { from: "fluent",    to: "ctx-build", label: "segment",     style: "solid"  },
       { from: "ctx-build", to: "llm-api",   label: "JSON Context",style: "dashed" },
       { from: "llm-api",   to: "ai-resp",   label: "Inference",   style: "dashed" },
+    ],
+    sandboxUrl: null,
+  },
+
+  "zero-fouc-theme-engine": {
+    id: "zero-fouc-theme-engine",
+    name: "Zero-FOUC Theme Engine",
+    version: "v2.0.0",
+    status: "Production",
+    category: "Performance / DX",
+    tags: ["TypeScript", "localStorage", "CSS Variables", "SSR", "Next.js"],
+    summary:
+      "A synchronously-executed IIFE injected into the document <head> that resolves theme state before React hydrates — eliminating the flash of unstyled content (FOUC) entirely.",
+    logicBreakdown:
+      "The engine reads from localStorage first, then falls back to the OS-level `prefers-color-scheme` media query if no stored preference exists. The resolved theme token is written directly to `document.documentElement` as both a `data-theme` attribute and a CSS custom property, ensuring the design token cascade is authoritative before any stylesheet or React tree is evaluated.",
+    specs: [
+      { label: "Pattern",      value: "Blocking IIFE" },
+      { label: "Storage",      value: "localStorage" },
+      { label: "Fallback",     value: "matchMedia" },
+      { label: "Injection",    value: "<head> pre-hydration" },
+      { label: "Token",        value: "CSS Custom Property" },
+      { label: "Framework",    value: "Next.js App Router" },
+      { label: "Flash Events", value: "0" },
+      { label: "Status",       value: "Production" },
+    ],
+    dependencies: [
+      { name: "No external deps",   version: "—",       purpose: "Pure browser APIs only" },
+      { name: "localStorage API",   version: "native",  purpose: "Theme preference persistence" },
+      { name: "matchMedia API",     version: "native",  purpose: "OS-level color scheme detection" },
+    ],
+    architecture: [
+      "IIFE injected as a blocking `<script>` tag before any stylesheets in the document `<head>`.",
+      "`localStorage.getItem('bc-theme')` resolves a stored user preference synchronously.",
+      "If no stored value, `window.matchMedia('(prefers-color-scheme: dark)')` provides the OS default.",
+      "`document.documentElement` receives both a `data-theme` attribute and CSS custom property before first paint.",
+    ],
+    knownLimitations: [
+      "Blocking execution adds ~0.5ms to TTFB — acceptable for zero FOUC; do not add async work inside.",
+      "localStorage is unavailable in SSR context — the try/catch guard is non-negotiable.",
+    ],
+    codeSnippet: {
+      language: "typescript",
+      code: `// Injected as a blocking <script> in app/layout.tsx
+// Runs synchronously before React hydrates — zero FOUC.
+(function () {
+  try {
+    const stored = localStorage.getItem("bc-theme");
+    const prefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
+    const theme = stored ?? (prefersDark ? "dark" : "light");
+    document.documentElement.setAttribute("data-theme", theme);
+    document.documentElement.style.setProperty(
+      "--bg-primary",
+      theme === "dark" ? "#000000" : "#FFFFFF"
+    );
+  } catch (_) {}
+})();`,
+    },
+    nodes: [
+      { id: "dom-ready", label: "DOM Parse",       sublabel: "<head> Script",        type: "source",  x: 60,  y: 60  },
+      { id: "ls-read",   label: "localStorage",    sublabel: "bc-theme key",         type: "store",   x: 60,  y: 170 },
+      { id: "media-q",   label: "matchMedia",      sublabel: "prefers-color-scheme", type: "store",   x: 220, y: 170 },
+      { id: "resolver",  label: "Theme Resolver",  sublabel: "Fallback Chain",       type: "process", x: 220, y: 60  },
+      { id: "css-token", label: "CSS Custom Prop", sublabel: "--bg-primary",         type: "process", x: 380, y: 60  },
+      { id: "dom-out",   label: "document.html",   sublabel: "data-theme applied",   type: "output",  x: 380, y: 170 },
+    ],
+    edges: [
+      { from: "dom-ready", to: "ls-read",   label: "getItem",     style: "solid"  },
+      { from: "dom-ready", to: "resolver",  label: "evaluate",    style: "solid"  },
+      { from: "ls-read",   to: "resolver",  label: "stored?",     style: "dashed" },
+      { from: "media-q",   to: "resolver",  label: "fallback",    style: "dashed" },
+      { from: "resolver",  to: "css-token", label: "setProperty", style: "solid"  },
+      { from: "css-token", to: "dom-out",   label: "paint",       style: "solid"  },
+    ],
+    sandboxUrl: null,
+  },
+
+  "global-telemetry-monitor": {
+    id: "global-telemetry-monitor",
+    name: "Global Telemetry Monitor",
+    version: "v1.1.0",
+    status: "Production",
+    category: "Observability / Performance",
+    tags: ["TypeScript", "PerformanceObserver", "Web Vitals", "Beacon API"],
+    summary:
+      "A zero-dependency, tree-shakeable observability module that registers PerformanceObserver listeners for Core Web Vitals (LCP, CLS, FID), buffers the events, and flushes them to a configurable analytics endpoint via navigator.sendBeacon on page hide.",
+    logicBreakdown:
+      "The module initializes three PerformanceObserver subscriptions against the `largest-contentful-paint`, `layout-shift`, and `first-input` entry types with `buffered: true` to catch pre-initialization events. Each entry is normalized into a structured JSON object and staged in an in-memory buffer. The `visibilitychange` event triggers a beacon flush, ensuring no telemetry is lost during tab switches or navigation.",
+    specs: [
+      { label: "Vitals",      value: "LCP · CLS · FID" },
+      { label: "Flush Mode",  value: "Beacon API" },
+      { label: "Trigger",     value: "visibilitychange" },
+      { label: "Buffer",      value: "In-memory array" },
+      { label: "Language",    value: "TypeScript 5.x" },
+      { label: "Bundle Size", value: "~0.8 kB gzip" },
+      { label: "Deps",        value: "Zero" },
+      { label: "Status",      value: "Production" },
+    ],
+    dependencies: [
+      { name: "PerformanceObserver",    version: "native", purpose: "Core Web Vitals collection" },
+      { name: "navigator.sendBeacon",   version: "native", purpose: "Non-blocking flush to analytics endpoint" },
+      { name: "visibilitychange event", version: "native", purpose: "Flush trigger on tab hide / navigation" },
+    ],
+    architecture: [
+      "PerformanceObserver registered for LCP, CLS, and FID with `buffered: true` to capture retroactive entries.",
+      "Each entry normalized to a structured payload: `{ type, name, value, ts }`.",
+      "In-memory buffer accumulates events between flushes to avoid per-event network calls.",
+      "`navigator.sendBeacon()` on `visibilitychange: hidden` guarantees delivery without blocking unload.",
+    ],
+    knownLimitations: [
+      "`navigator.sendBeacon` payload is capped at ~64 KB — batch-flush if session volume is high.",
+      "FID is deprecated in favour of INP in newer browsers; a v1.2 upgrade will add INP support.",
+    ],
+    codeSnippet: {
+      language: "typescript",
+      code: `export function initTelemetry(endpoint: string) {
+  const buffer: unknown[] = [];
+
+  const flush = () => {
+    if (!buffer.length) return;
+    navigator.sendBeacon(endpoint, JSON.stringify(buffer.splice(0)));
+  };
+
+  const observer = new PerformanceObserver((list) => {
+    for (const entry of list.getEntries()) {
+      buffer.push({
+        type: entry.entryType,
+        name: entry.name,
+        value:
+          (entry as PerformanceEventTiming).processingStart ??
+          entry.startTime,
+        ts: Date.now(),
+      });
+    }
+  });
+
+  observer.observe({ type: "largest-contentful-paint", buffered: true });
+  observer.observe({ type: "layout-shift", buffered: true });
+  observer.observe({ type: "first-input", buffered: true });
+
+  window.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") flush();
+  });
+
+  return { flush, observer };
+}`,
+    },
+    nodes: [
+      { id: "page",     label: "Page Load",     sublabel: "Browser Runtime",         type: "source",  x: 60,  y: 60  },
+      { id: "observer", label: "Perf Observer", sublabel: "LCP · CLS · FID",         type: "process", x: 220, y: 60  },
+      { id: "buffer",   label: "Event Buffer",  sublabel: "In-Memory Array",         type: "store",   x: 220, y: 170 },
+      { id: "beacon",   label: "Beacon API",    sublabel: "navigator.sendBeacon",    type: "process", x: 380, y: 60  },
+      { id: "vis-chg",  label: "Visibility",    sublabel: "visibilitychange event",  type: "source",  x: 60,  y: 170 },
+      { id: "endpoint", label: "Analytics EP",  sublabel: "Structured JSON POST",    type: "output",  x: 380, y: 170 },
+    ],
+    edges: [
+      { from: "page",     to: "observer", label: "observe",   style: "solid"  },
+      { from: "observer", to: "buffer",   label: "push",      style: "dashed" },
+      { from: "vis-chg",  to: "beacon",   label: "hidden",    style: "solid"  },
+      { from: "buffer",   to: "beacon",   label: "splice(0)", style: "solid"  },
+      { from: "beacon",   to: "endpoint", label: "POST",      style: "solid"  },
     ],
     sandboxUrl: null,
   },
@@ -621,7 +785,72 @@ function classifyVector(evt: WafEvent): string {
 };
 
 export const getTool = (id: string): Tool =>
-  TOOLS[id] ?? {
+  TOOLS[id] ??
+  (() => {
+    const app = LAB_APPLICATIONS.find((a) => a.id === id);
+    if (!app) return null;
+
+    const nodes: DiagramNode[] =
+      app.category === "Marketing"
+        ? [
+            { id: "signal", label: "Signals", sublabel: "Market Data", type: "source", x: 60, y: 60 },
+            { id: "plan", label: "Strategy", sublabel: "Plan Builder", type: "process", x: 220, y: 60 },
+            { id: "model", label: "Model", sublabel: "ROI · Mix", type: "store", x: 220, y: 170 },
+            { id: "output", label: "Playbook", sublabel: "Execution", type: "output", x: 380, y: 170 },
+          ]
+        : app.category === "Developer"
+          ? [
+              { id: "ui", label: "UI", sublabel: "User Input", type: "source", x: 60, y: 60 },
+              { id: "logic", label: "Logic", sublabel: "Rules Engine", type: "process", x: 220, y: 60 },
+              { id: "state", label: "State", sublabel: "Deterministic", type: "store", x: 220, y: 170 },
+              { id: "result", label: "Result", sublabel: "UX Output", type: "output", x: 380, y: 170 },
+            ]
+          : [
+              { id: "edge", label: "Edge", sublabel: "Ingress", type: "source", x: 60, y: 60 },
+              { id: "pipe", label: "Pipeline", sublabel: "Transform", type: "process", x: 220, y: 60 },
+              { id: "cache", label: "Store", sublabel: "Cache · DB", type: "store", x: 220, y: 170 },
+              { id: "dash", label: "Output", sublabel: "Dashboard", type: "output", x: 380, y: 170 },
+            ];
+
+    const edges: DiagramEdge[] = [
+      { from: nodes[0]!.id, to: nodes[1]!.id, label: "ingest", style: "solid" },
+      { from: nodes[1]!.id, to: nodes[2]!.id, label: "compute", style: "dashed" },
+      { from: nodes[2]!.id, to: nodes[3]!.id, label: "serve", style: "solid" },
+    ];
+
+    const lang = app.codeVault.language.toLowerCase();
+
+    const derived: Tool = {
+      id: app.id,
+      name: app.title,
+      version: "v1.0.0",
+      status: app.status,
+      category: app.category,
+      tags: app.techStack,
+      summary: app.valueProposition,
+      logicBreakdown: `${app.developerLogic} ${app.technologistInfrastructure}`,
+      specs: [
+        { label: "Pillar", value: app.category },
+        ...app.metrics.map((m) => ({ label: m.label, value: m.value })),
+      ],
+      dependencies: app.techStack.map((t) => ({
+        name: t,
+        version: "—",
+        purpose: "Core stack component",
+      })),
+      architecture: [app.valueProposition, app.developerLogic, app.technologistInfrastructure],
+      knownLimitations: [],
+      codeSnippet: {
+        language: lang,
+        code: app.codeVault.code,
+      },
+      nodes,
+      edges,
+      sandboxUrl: null,
+    };
+
+    return derived;
+  })() ?? {
     id,
     name: id.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
     version: "v2.1.0",

@@ -89,3 +89,36 @@ h3 {
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(255, 165, 0, 0.15); /* Strategic Orange soft glow */
 }
+
+/* Resume: Testimonial ticker rows */
+@keyframes tickerLeft {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes tickerRight {
+  0%   { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+
+.ticker-left {
+  animation: tickerLeft 40s linear infinite;
+}
+
+.ticker-right {
+  animation: tickerRight 45s linear infinite;
+}
+
+.ticker-left:hover,
+.ticker-right:hover {
+  animation-play-state: paused;
+}
+
+/* Hide scrollbar utility */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}

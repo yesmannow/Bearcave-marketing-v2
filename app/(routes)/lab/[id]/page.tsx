@@ -1,6 +1,7 @@
 import { Cpu, Package, GitBranch, Zap, AlertTriangle, Terminal, BrainCircuit } from "lucide-react";
 import type { Metadata } from "next";
 import { getTool } from "./data";
+import { GA4FlowVisualizer } from "./GA4FlowVisualizer";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -158,6 +159,9 @@ export default async function LabItemPage({ params }: Props) {
             </div>
           </section>
         )}
+
+        {/* GA4 Live Pipeline Visualizer */}
+        {tool.id === "ga4-analytics-bridge" && <GA4FlowVisualizer />}
 
         {/* Dependencies */}
         <section>

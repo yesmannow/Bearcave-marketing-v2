@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { motion, useInView, AnimatePresence } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Download, Mail, MapPin, Calendar, ChevronDown } from "lucide-react";
 import {
   TIMELINE,
@@ -16,344 +16,401 @@ import {
 
 import Image from "next/image";
 
-function FadeInWhenVisible({ children }: { children: React.ReactNode }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
-
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 20 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-    >
-      {children}
-    </motion.div>
-  );
-}
+// ── Hero ───────────────────────────────────────────────────────────────────
 
 function Hero() {
   return (
-    <section className="px-6 md:px-12 py-24 border-b border-[#1f1f1f] relative overflow-hidden">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-16">
+    <section className="px-6 md:px-12 py-16 md:py-24 border-b border-[#1f1f1f] relative overflow-hidden">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start justify-between gap-12 md:gap-20">
         <div className="flex-1">
-          <p className="text-[#00F2FF] text-xs tracking-[0.3em] uppercase mb-6">
-            Professional Resume
-          </p>
+          <div className="flex items-center justify-between mb-6">
+            <p className="text-[#00F2FF] text-[10px] tracking-[0.35em] uppercase font-mono">
+              Professional Resume
+            </p>
+            <button className="inline-flex items-center gap-2 px-4 py-2 bg-[#00F2FF]/10 text-[#00F2FF] border border-[#00F2FF]/30 text-xs font-mono tracking-widest uppercase hover:bg-[#00F2FF]/20 transition-colors rounded-sm">
+              <Download size={14} />
+              PDF
+            </button>
+          </div>
 
-          <h1 className="font-serif text-5xl md:text-7xl font-black leading-[1.05] tracking-tight mb-8">
+          <h1 className="font-serif text-5xl md:text-7xl font-black leading-[1.05] tracking-tight mb-4 text-[#EDEDED]">
             Jacob Darling
           </h1>
 
-          <p className="text-2xl md:text-3xl text-[#a0a0a0] mb-8">
+          <p className="text-xl md:text-2xl text-[#a0a0a0] mb-6">
             {SYSTEM_STATS.role}
           </p>
 
-          <div className="flex flex-wrap gap-6 text-sm text-[#a0a0a0] mb-12">
+          <div className="flex flex-wrap gap-4 text-sm text-[#a0a0a0] mb-8 font-mono">
             <div className="flex items-center gap-2">
-              <MapPin size={16} className="text-[#00F2FF]" />
+              <MapPin size={14} className="text-[#00F2FF]" />
               {SYSTEM_STATS.location}
             </div>
             <div className="flex items-center gap-2">
-              <Calendar size={16} className="text-[#00F2FF]" />
+              <Calendar size={14} className="text-[#00F2FF]" />
               {SYSTEM_STATS.uptime} Experience
             </div>
             <div className="flex items-center gap-2">
-              <Mail size={16} className="text-[#00F2FF]" />
+              <Mail size={14} className="text-[#00F2FF]" />
               jacob@jacobdarling.com
             </div>
           </div>
 
-          <p className="text-base md:text-lg text-[#a0a0a0] leading-relaxed max-w-3xl mb-12">
-            {EXECUTIVE_SUMMARY}
-          </p>
-
-          <button
-            className="inline-flex items-center gap-2 px-8 py-4 bg-[#00F2FF] text-black text-sm font-semibold tracking-widest uppercase pearl-interact hover:bg-[#00bcd4] min-h-[48px]"
-          >
-            <Download size={16} />
-            Download Resume
-          </button>
+          {/* Executive Summary */}
+          <div className="bg-[#050505] border border-[#1f1f1f] p-6 md:p-8 ocean-pearl-glass mt-4">
+            <p className="text-[#00F2FF] text-[10px] tracking-[0.35em] uppercase mb-4 font-mono">
+              Executive Summary
+            </p>
+            <p className="text-sm md:text-base text-[#a0a0a0] leading-relaxed">
+              {EXECUTIVE_SUMMARY}
+            </p>
+          </div>
         </div>
 
-        {/* Visual Uplink Bio Frame */}
-        <div className="relative w-64 h-64 md:w-80 md:h-80 shrink-0">
-          <div className="absolute inset-0 rounded-full border border-[#00F2FF]/20 animate-[spin_10s_linear_infinite]" />
-          <div className="absolute inset-2 rounded-full border border-dashed border-[#00F2FF]/40 animate-[spin_15s_linear_infinite_reverse]" />
-          <div className="absolute inset-4 rounded-full overflow-hidden bg-[#111] border border-[#1f1f1f]">
-            <Image
-              src="https://res.cloudinary.com/djhqowk67/image/upload/f_auto,q_auto/v1/studio/graphic-design/bio-featured-2"
-              alt="Jacob Darling"
-              fill
-              className="object-cover grayscale hover:grayscale-0 transition-all duration-700 ease-out"
-              sizes="(max-width: 768px) 256px, 320px"
-            />
-            {/* Overlay scanline */}
-            <div className="absolute inset-0 pointer-events-none mix-blend-overlay opacity-30"
-                 style={{
-                   background: "linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 242, 255, 0.25) 50%)",
-                   backgroundSize: "100% 4px"
-                 }}
-            />
+        {/* Right side: Bio + Education */}
+        <div className="flex flex-col items-center gap-8 shrink-0 md:pt-4">
+          <div className="relative w-52 h-52 md:w-72 md:h-72">
+            <div className="absolute inset-0 rounded-full border border-[#00F2FF]/20 animate-[spin_10s_linear_infinite]" />
+            <div className="absolute inset-2 rounded-full border border-dashed border-[#00F2FF]/40 animate-[spin_15s_linear_infinite_reverse]" />
+            <div className="absolute inset-4 rounded-full overflow-hidden bg-[#111] border border-[#1f1f1f]">
+              <Image
+                src="https://res.cloudinary.com/djhqowk67/image/upload/f_auto,q_auto/v1/studio/graphic-design/bio-featured-2"
+                alt="Jacob Darling"
+                fill
+                className="object-cover grayscale hover:grayscale-0 transition-all duration-700 ease-out"
+                sizes="(max-width: 768px) 208px, 288px"
+              />
+              <div
+                className="absolute inset-0 pointer-events-none mix-blend-overlay opacity-30"
+                style={{
+                  background: "linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 242, 255, 0.25) 50%)",
+                  backgroundSize: "100% 4px",
+                }}
+              />
+            </div>
+            <div className="absolute top-0 left-1/2 w-2 h-2 bg-[#00F2FF] rounded-full -translate-x-1/2 -translate-y-1/2 shadow-[0_0_10px_#00F2FF]" />
+            <div className="absolute bottom-0 left-1/2 w-2 h-2 bg-[#00F2FF] rounded-full -translate-x-1/2 translate-y-1/2 shadow-[0_0_10px_#00F2FF]" />
+            <div className="absolute left-0 top-1/2 w-2 h-2 bg-[#00F2FF] rounded-full -translate-x-1/2 -translate-y-1/2 shadow-[0_0_10px_#00F2FF]" />
+            <div className="absolute right-0 top-1/2 w-2 h-2 bg-[#00F2FF] rounded-full translate-x-1/2 -translate-y-1/2 shadow-[0_0_10px_#00F2FF]" />
           </div>
-          {/* Decorative nodes */}
-          <div className="absolute top-0 left-1/2 w-2 h-2 bg-[#00F2FF] rounded-full -translate-x-1/2 -translate-y-1/2 shadow-[0_0_10px_#00F2FF]" />
-          <div className="absolute bottom-0 left-1/2 w-2 h-2 bg-[#00F2FF] rounded-full -translate-x-1/2 translate-y-1/2 shadow-[0_0_10px_#00F2FF]" />
-          <div className="absolute left-0 top-1/2 w-2 h-2 bg-[#00F2FF] rounded-full -translate-x-1/2 -translate-y-1/2 shadow-[0_0_10px_#00F2FF]" />
-          <div className="absolute right-0 top-1/2 w-2 h-2 bg-[#00F2FF] rounded-full translate-x-1/2 -translate-y-1/2 shadow-[0_0_10px_#00F2FF]" />
+
+          <div className="flex flex-col items-center text-center mt-2 max-w-[280px]">
+            <Image
+              src="/images/Indiana_University_logotype.svg.png"
+              alt="Indiana University"
+              width={180}
+              height={60}
+              className="mb-4 opacity-90 object-contain"
+            />
+            <p className="text-[10px] tracking-[0.2em] text-[#555] uppercase font-mono mb-2">
+              Bloomington · IN · Aug 2004 — May 2008
+            </p>
+            <p className="text-sm font-semibold text-[#EDEDED] mb-1">
+              Bachelor of Science
+            </p>
+            <p className="text-xs text-[#a0a0a0]">
+              Business Management
+            </p>
+          </div>
         </div>
       </div>
     </section>
   );
 }
 
-function Stats() {
+// ── KPI Stats ──────────────────────────────────────────────────────────────
+
+function KPISection() {
   return (
-    <section className="border-b border-[#1f1f1f]">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-[#1f1f1f]">
-        {KPI_STATS.map((stat, i) => (
-          <FadeInWhenVisible key={i}>
-            <div className="bg-black p-8 flex flex-col gap-3">
-              <p className="font-mono text-3xl md:text-4xl font-bold text-[#00F2FF]">
+    <section className="border-b border-[#1f1f1f] bg-[#050505]">
+      <div className="max-w-7xl mx-auto px-6 md:px-12 py-12 md:py-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-[#1f1f1f]">
+          {KPI_STATS.map((stat, i) => (
+            <div key={i} className="bg-black p-8 flex flex-col gap-3">
+              <p className="font-mono text-4xl md:text-5xl font-bold text-[#00F2FF]">
                 {stat.value}
               </p>
-              <p className="text-xs tracking-[0.2em] uppercase text-[#666]">
+              <p className="text-[10px] tracking-[0.2em] uppercase text-[#666] font-mono">
                 {stat.label}
               </p>
-              <p className="text-sm text-[#a0a0a0] leading-relaxed">
+              <p className="text-sm text-[#a0a0a0] leading-relaxed mt-2">
                 {stat.description}
               </p>
             </div>
-          </FadeInWhenVisible>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ── Experience Timeline ────────────────────────────────────────────────────
+
+function RoleCard({ entry }: { entry: typeof TIMELINE[number] }) {
+  const [expanded, setExpanded] = useState(false);
+  const hasManyBullets = entry.highlights && entry.highlights.length > 5;
+  const visibleBullets = expanded ? entry.highlights : entry.highlights?.slice(0, 5);
+
+  return (
+    <div className="w-[85vw] md:w-[600px] lg:w-[700px] shrink-0 snap-start flex flex-col">
+      <div className="mb-6">
+        <span className="inline-block px-3 py-1.5 text-[10px] tracking-[0.2em] uppercase border border-[#00F2FF] text-[#00F2FF] mb-5 font-mono">
+          {entry.year}
+        </span>
+        <h3 className="font-serif text-3xl md:text-4xl font-bold mb-3 text-[#EDEDED]">
+          {entry.title}
+        </h3>
+        <p className="text-[10px] md:text-[11px] text-[#555] tracking-[0.2em] uppercase mb-6 font-mono">
+          {entry.org} · {entry.location} · {entry.duration}
+        </p>
+        <p className="text-sm md:text-base text-[#a0a0a0] leading-relaxed">
+          {entry.description}
+        </p>
+      </div>
+
+      {entry.highlights && entry.highlights.length > 0 && (
+        <div className="mt-2 flex flex-col items-start">
+          {hasManyBullets && (
+            <button
+              onClick={() => setExpanded(!expanded)}
+              className="flex items-center gap-2 text-[10px] font-mono tracking-widest uppercase text-[#FFA500] hover:text-[#ffb732] transition-colors border border-[#FFA500]/30 px-5 py-2.5 mb-5 hover:bg-[#FFA500]/10 rounded-sm"
+            >
+              {expanded ? "CLOSE TECHNICAL PROOF" : "VIEW TECHNICAL PROOF"}
+              <motion.div
+                animate={{ rotate: expanded ? 180 : 0 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+              >
+                <ChevronDown size={14} />
+              </motion.div>
+            </button>
+          )}
+
+          <div className="w-full border border-[#1f1f1f] bg-[#050505] p-6 md:p-8 ocean-pearl-glass">
+            <ul className="space-y-4">
+              {visibleBullets.map((h, j) => (
+                <li key={j} className="flex items-start gap-3 text-sm text-[#a0a0a0]">
+                  <span
+                    className="w-1.5 h-1.5 rounded-full mt-2 shrink-0"
+                    style={{ background: "#FFA500", boxShadow: "0 0 8px #FFA50088" }}
+                  />
+                  <span className="leading-relaxed">{h.text}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ExperienceTimeline() {
+  const roles = TIMELINE.filter((e) => e.entryType === "role");
+
+  return (
+    <section className="py-20 border-b border-[#1f1f1f] bg-black">
+      <div className="max-w-7xl mx-auto px-6 md:px-12 mb-10">
+        <p className="text-[#00F2FF] text-[10px] tracking-[0.35em] uppercase font-mono">
+          Career Timeline
+        </p>
+      </div>
+
+      <div className="flex overflow-x-auto scrollbar-none snap-x snap-mandatory px-6 md:px-12 gap-8 md:gap-12 pb-8" style={{ scrollPaddingLeft: "1.5rem" }}>
+        {roles.map((role, i) => (
+          <RoleCard key={i} entry={role} />
         ))}
       </div>
     </section>
   );
 }
 
-function Experience() {
-  const [expandedIndices, setExpandedIndices] = useState<number[]>([]);
+// ── Skills Section ─────────────────────────────────────────────────────────
 
-  const toggleExpand = (index: number) => {
-    setExpandedIndices(prev =>
-      prev.includes(index)
-        ? prev.filter(i => i !== index)
-        : [...prev, index]
-    );
-  };
+function SkillsSection() {
+  const [activeSkill, setActiveSkill] = useState(0);
+  const activeCategory = SKILL_BENTO[activeSkill];
 
   return (
-    <section className="px-6 md:px-12 py-24 border-b border-[#1f1f1f]">
-      <p className="text-[#00F2FF] text-xs tracking-[0.3em] uppercase mb-12">
-        Professional Experience
-      </p>
-
-      <div className="space-y-8 max-w-4xl">
-        {TIMELINE.map((entry, i) => {
-          const isExpanded = expandedIndices.includes(i);
-
-          return (
-            <FadeInWhenVisible key={i}>
-              <div className="relative pl-8 border-l border-[#1f1f1f]">
-                <div className="absolute -left-[5px] top-0 w-2.5 h-2.5 rounded-full bg-[#00F2FF]" />
-
-                <div className="mb-4">
-                  <span className="inline-block px-2 py-1 text-[10px] tracking-[0.2em] uppercase border border-[#00F2FF] text-[#00F2FF] mb-3">
-                    {entry.year}
-                  </span>
-                  <h3 className="font-serif text-2xl md:text-3xl font-bold mb-2">
-                    {entry.title}
-                  </h3>
-                  <p className="text-sm text-[#666] tracking-widest uppercase mb-4">
-                    {entry.org} · {entry.location} · {entry.duration}
-                  </p>
-                  <p className="text-base text-[#a0a0a0] leading-relaxed mb-6">
-                    {entry.description}
-                  </p>
-                </div>
-
-                {entry.highlights && entry.highlights.length > 0 && (
-                  <div className="mt-4">
-                    <button
-                      onClick={() => toggleExpand(i)}
-                      className="flex items-center gap-2 text-xs font-mono tracking-widest uppercase text-[#FFA500] pearl-interact hover:text-[#ffb732] transition-colors bg-[#0a0a0a] ocean-pearl-glass px-6 py-3 border border-[#1f1f1f] min-h-[48px]"
-                    >
-                      {isExpanded ? "Close Technical Proof" : "View Technical Proof"}
-                      <motion.div
-                        animate={{ rotate: isExpanded ? 180 : 0 }}
-                        transition={{ duration: 0.3, ease: "easeInOut" }}
-                      >
-                        <ChevronDown size={14} />
-                      </motion.div>
-                    </button>
-
-                    <AnimatePresence>
-                      {isExpanded && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
-                          className="overflow-hidden"
-                        >
-                          <ul className="space-y-3 mt-6 p-6 bg-[#0a0a0a] border border-[#1f1f1f] ocean-pearl-glass rounded-sm">
-                            {entry.highlights.map((h, j) => (
-                              <li key={j} className="flex items-start gap-3 text-sm text-[#a0a0a0]">
-                                <span className="w-1.5 h-1.5 rounded-full bg-[#FFA500] mt-2 shrink-0" style={{ boxShadow: "0 0 8px #FFA50088" }} />
-                                <span className="leading-relaxed">{h.text}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                )}
-              </div>
-            </FadeInWhenVisible>
-          );
-        })}
-      </div>
-    </section>
-  );
-}
-
-function Skills() {
-  return (
-    <section className="px-6 md:px-12 py-24 border-b border-[#1f1f1f]">
-      <p className="text-[#00F2FF] text-xs tracking-[0.3em] uppercase mb-12">
+    <div className="px-6 md:px-12 py-10 max-w-7xl mx-auto">
+      <p className="text-[#00F2FF] text-[10px] tracking-[0.35em] uppercase mb-6 font-mono">
         Skills & Expertise
       </p>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 bg-black">
+      {/* Pill bar */}
+      <div className="flex flex-wrap gap-2 mb-8">
         {SKILL_BENTO.map((cat, i) => (
-          <FadeInWhenVisible key={i}>
-            <div className="h-full bg-[#050505] p-8 flex flex-col gap-6 border border-[#1f1f1f] ocean-pearl-glass transition-all duration-500 hover:border-[#00F2FF]/50">
-              <div className="flex items-center gap-4">
-                <span className="text-3xl bg-[#111] p-3 rounded-lg border border-[#222] shadow-[0_0_15px_rgba(0,242,255,0.05)]">{cat.icon}</span>
-                <h3 className="font-serif text-xl font-bold text-[#EDEDED] tracking-tight">
-                  {cat.title}
-                </h3>
-              </div>
-              <ul className="flex flex-col gap-3 mt-2 flex-1">
-                {cat.skills.map((skill) => (
-                  <li key={skill} className="text-sm text-[#a0a0a0] flex items-start gap-3">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#00F2FF] mt-1.5 shrink-0 opacity-70" />
-                    <span className="leading-relaxed">{skill}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </FadeInWhenVisible>
+          <button
+            key={i}
+            onClick={() => setActiveSkill(i)}
+            className={`flex items-center gap-2 px-4 py-2 text-[10px] font-mono tracking-[0.15em] uppercase border transition-all duration-200 ${
+              activeSkill === i
+                ? "bg-[#00F2FF]/10 border-[#00F2FF]/60 text-[#00F2FF]"
+                : "border-[#1f1f1f] text-[#555] hover:border-[#00F2FF]/30 hover:text-[#999]"
+            }`}
+            style={activeSkill === i ? { boxShadow: "0 0 10px #00F2FF22" } : {}}
+          >
+            <span>{cat.icon}</span>
+            {cat.title}
+          </button>
         ))}
       </div>
-    </section>
+
+      {/* Active panel */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={activeSkill}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -6 }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
+          className="bg-[#050505] border border-[#1f1f1f] ocean-pearl-glass p-8"
+        >
+          <div className="flex items-center gap-4 mb-6">
+            <span className="text-4xl bg-[#111] p-3 rounded-lg border border-[#222] shadow-[0_0_15px_rgba(0,242,255,0.05)]">
+              {activeCategory.icon}
+            </span>
+            <h3 className="font-serif text-2xl font-bold text-[#EDEDED]">
+              {activeCategory.title}
+            </h3>
+          </div>
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3">
+            {activeCategory.skills.map((skill, j) => (
+              <div key={j} className="flex items-start gap-3 text-sm text-[#a0a0a0]">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#00F2FF] mt-1.5 shrink-0 opacity-70" />
+                <span className="leading-relaxed">{skill}</span>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      </AnimatePresence>
+    </div>
   );
 }
 
-function Testimonials() {
+// ── Signals Tab: Testimonial Ticker + Volunteer ────────────────────────────
+
+function TestimonialTicker() {
+  const half = Math.ceil(TESTIMONIALS.length / 2);
+  const row1 = TESTIMONIALS.slice(0, half);
+  const row2 = TESTIMONIALS.slice(half);
+
+  const TestimonialCard = ({ t }: { t: (typeof TESTIMONIALS)[number] }) => (
+    <div className="w-72 shrink-0 bg-[#050505] border border-[#1f1f1f] p-5 ocean-pearl-glass hover:border-[#FFA500]/30 transition-colors mx-2">
+      <p className="text-sm text-[#EDEDED] leading-relaxed italic mb-4">
+        &ldquo;{t.quote}&rdquo;
+      </p>
+      <div className="flex items-center gap-3 pt-3 border-t border-[#1f1f1f]/50">
+        <div className="w-8 h-8 rounded-full bg-[#111] border border-[#222] flex items-center justify-center text-[#FFA500] font-serif font-bold text-sm shrink-0">
+          {t.author.charAt(0)}
+        </div>
+        <div>
+          <p className="text-xs font-semibold text-[#EDEDED]">{t.author}</p>
+          <p className="text-[10px] text-[#555] font-mono">{t.role}</p>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
-    <section className="px-6 md:px-12 py-24 border-b border-[#1f1f1f] bg-[#050505]">
-      <p className="text-[#FFA500] text-xs tracking-[0.3em] uppercase mb-12">
+    <div className="mb-12">
+      <p className="text-[#FFA500] text-[10px] tracking-[0.35em] uppercase mb-6 font-mono px-6 md:px-12">
         Verified Endorsements
       </p>
 
-      <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
-        {TESTIMONIALS.map((t, i) => (
-          <FadeInWhenVisible key={i}>
-            <div className="break-inside-avoid bg-black border border-[#1f1f1f] p-8 ocean-pearl-glass transition-all hover:border-[#FFA500]/30 h-full flex flex-col justify-between">
-              <p className="text-sm text-[#EDEDED] leading-relaxed mb-8 italic">
-                &ldquo;{t.quote}&rdquo;
-              </p>
-              <div className="flex items-center gap-4 mt-auto pt-6 border-t border-[#1f1f1f]/50">
-                <div className="w-10 h-10 shrink-0 rounded-full bg-[#111] border border-[#222] flex items-center justify-center text-[#FFA500] font-serif font-bold shadow-[0_0_15px_rgba(255,165,0,0.05)]">
-                  {t.author.charAt(0)}
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-[#EDEDED] tracking-tight">
-                    {t.author}
-                  </p>
-                  <p className="text-xs text-[#a0a0a0] font-mono tracking-widest mt-1">
-                    {t.role}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </FadeInWhenVisible>
-        ))}
+      {/* Row 1 — scrolls left */}
+      <div className="overflow-hidden mb-3">
+        <div className="ticker-left flex" style={{ width: "max-content" }}>
+          {[...row1, ...row1].map((t, i) => (
+            <TestimonialCard key={i} t={t} />
+          ))}
+        </div>
       </div>
-    </section>
+
+      {/* Row 2 — scrolls right */}
+      <div className="overflow-hidden">
+        <div className="ticker-right flex" style={{ width: "max-content" }}>
+          {[...row2, ...row2].map((t, i) => (
+            <TestimonialCard key={i} t={t} />
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }
 
-
-
-function Awards() {
+function SignalsSection() {
   return (
-    <section className="px-6 md:px-12 py-24 border-b border-[#1f1f1f]">
-      <p className="text-[#00F2FF] text-xs tracking-[0.3em] uppercase mb-12">
-        Awards & Recognition
-      </p>
+    <div className="py-10 max-w-7xl mx-auto">
+      <TestimonialTicker />
 
-      <div className="max-w-4xl">
-        {AWARDS.map((award, i) => (
-          <FadeInWhenVisible key={i}>
-            <div className="flex items-start gap-6 p-6 bg-[#0a0a0a] border border-[#1f1f1f] hover:border-[#00F2FF] transition-colors">
-              <div className="text-4xl">🏆</div>
-              <div>
-                <h3 className="font-serif text-xl font-bold mb-2">{award.title}</h3>
-                <p className="text-sm text-[#666] mb-2">
-                  {award.organization} · {award.year}
-                </p>
-                {award.description && (
-                  <p className="text-sm text-[#a0a0a0]">{award.description}</p>
-                )}
-              </div>
+      <div className="px-6 md:px-12">
+        <p className="text-[#00F2FF] text-[10px] tracking-[0.35em] uppercase mb-6 font-mono">
+          Volunteer & Community
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {VOLUNTEER_EXPERIENCE.map((vol, i) => (
+            <div
+              key={i}
+              className="bg-[#0a0a0a] border border-[#1f1f1f] p-5 hover:border-[#00F2FF]/40 transition-colors ocean-pearl-glass"
+            >
+              <h3 className="font-serif text-base font-bold mb-1 text-[#EDEDED]">
+                {vol.title}
+              </h3>
+              <p className="text-[11px] text-[#555] mb-2 font-mono">{vol.organization}</p>
+              <p className="text-[10px] text-[#00F2FF] mb-3 font-mono">{vol.duration}</p>
+              <p className="text-sm text-[#a0a0a0] leading-relaxed">{vol.description}</p>
             </div>
-          </FadeInWhenVisible>
-        ))}
+          ))}
+        </div>
       </div>
-    </section>
+    </div>
   );
 }
 
-function VolunteerExperience() {
+// ── Awards Section ─────────────────────────────────────────────────────────
+
+function AwardsSection() {
   return (
-    <section className="px-6 md:px-12 py-24 border-b border-[#1f1f1f]">
-      <p className="text-[#00F2FF] text-xs tracking-[0.3em] uppercase mb-12">
-        Volunteer Experience
-      </p>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-6xl">
-        {VOLUNTEER_EXPERIENCE.map((vol, i) => (
-          <FadeInWhenVisible key={i}>
-            <div className="bg-[#0a0a0a] border border-[#1f1f1f] p-6 hover:border-[#00F2FF] transition-colors">
-              <h3 className="font-serif text-lg font-bold mb-2">{vol.title}</h3>
-              <p className="text-sm text-[#666] mb-3">
-                {vol.organization}
+    <section className="py-20 border-b border-[#1f1f1f] bg-[#050505]">
+      <div className="max-w-7xl mx-auto px-6 md:px-12">
+        <p className="text-[#00F2FF] text-[10px] tracking-[0.35em] uppercase mb-8 font-mono">
+          Recognition & Awards
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {AWARDS.map((award, i) => (
+            <div
+              key={i}
+              className="flex flex-col gap-2 p-6 bg-black border border-[#1f1f1f] ocean-pearl-glass hover:border-[#00F2FF]/40 transition-colors"
+            >
+              <span className="text-3xl mb-2">🏆</span>
+              <h3 className="font-serif text-xl font-bold text-[#EDEDED] leading-tight">
+                {award.title}
+              </h3>
+              <p className="text-[11px] text-[#666] font-mono tracking-widest uppercase">
+                {award.organization} · {award.year}
               </p>
-              <p className="text-xs text-[#00F2FF] mb-3">{vol.duration}</p>
-              <p className="text-sm text-[#a0a0a0] leading-relaxed">
-                {vol.description}
-              </p>
+              {award.description && (
+                <p className="text-sm text-[#a0a0a0] mt-2 leading-relaxed">{award.description}</p>
+              )}
             </div>
-          </FadeInWhenVisible>
-        ))}
+          ))}
+        </div>
       </div>
     </section>
   );
 }
+
+// ── Page ───────────────────────────────────────────────────────────────────
 
 export default function ResumePage() {
   return (
-    <div className="bg-black text-[#f0f0f0]">
+    <div className="bg-black text-[#f0f0f0] min-h-screen">
       <Hero />
-      <Stats />
-      <Experience />
-      <Skills />
-      <Testimonials />
-      <Awards />
-      <VolunteerExperience />
+      <KPISection />
+      <ExperienceTimeline />
+      <SkillsSection />
+      <AwardsSection />
+      <SignalsSection />
     </div>
   );
 }
