@@ -63,7 +63,7 @@ export default function HomePage() {
                       {t.author.charAt(0)}
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-[#EDEDED] tracking-tight">
+                      <p className="text-sm font-semibold text-[#FFA500] tracking-tight">
                         {t.author}
                       </p>
                       <p className="text-xs text-[#a0a0a0] font-mono tracking-widest mt-1">
@@ -115,7 +115,7 @@ export default function HomePage() {
 
           <a
             href="mailto:hello@bearcave.marketing"
-            className="inline-flex items-center gap-2 px-10 py-5 bg-[#FFA500] text-black text-sm font-bold tracking-[0.15em] uppercase shrink-0 pearl-interact"
+            className="inline-flex items-center gap-2 px-10 py-5 bg-[#FFA500] text-black text-sm font-bold tracking-[0.15em] uppercase shrink-0 pearl-interact min-h-[48px]"
           >
             Start a Conversation
             <ArrowRight size={18} />

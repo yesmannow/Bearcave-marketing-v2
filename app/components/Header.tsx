@@ -16,7 +16,7 @@ export default function Header() {
 
   return (
     <header
-      className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 h-16"
+      className="hidden md:flex fixed top-0 left-0 right-0 z-50 items-center justify-between px-6 md:px-12 h-16"
       style={{
         backdropFilter: "blur(12px)",
         WebkitBackdropFilter: "blur(12px)",

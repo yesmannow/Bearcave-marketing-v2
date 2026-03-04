@@ -33,7 +33,9 @@ export default function LenisProvider({ children }: { children: ReactNode }) {
       options={{
         lerp: 0.1,
         duration: 1.5,
-        smoothWheel: true,
+        smoothWheel: false,
+        wheelMultiplier: 1,
+        touchMultiplier: 2.5,
       }}
     >
       <GSAPSyncBridge />

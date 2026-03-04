@@ -69,7 +69,7 @@ function Hero() {
           </p>
 
           <button
-            className="inline-flex items-center gap-2 px-6 py-3 bg-[#00F2FF] text-black text-sm font-semibold tracking-widest uppercase pearl-interact hover:bg-[#00bcd4]"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-[#00F2FF] text-black text-sm font-semibold tracking-widest uppercase pearl-interact hover:bg-[#00bcd4] min-h-[48px]"
           >
             <Download size={16} />
             Download Resume
@@ -176,7 +176,7 @@ function Experience() {
                   <div className="mt-4">
                     <button
                       onClick={() => toggleExpand(i)}
-                      className="flex items-center gap-2 text-xs font-mono tracking-widest uppercase text-[#FFA500] pearl-interact hover:text-[#ffb732] transition-colors bg-[#0a0a0a] ocean-pearl-glass px-4 py-2 border border-[#1f1f1f]"
+                      className="flex items-center gap-2 text-xs font-mono tracking-widest uppercase text-[#FFA500] pearl-interact hover:text-[#ffb732] transition-colors bg-[#0a0a0a] ocean-pearl-glass px-6 py-3 border border-[#1f1f1f] min-h-[48px]"
                     >
                       {isExpanded ? "Close Technical Proof" : "View Technical Proof"}
                       <motion.div

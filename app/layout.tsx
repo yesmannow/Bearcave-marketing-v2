@@ -3,6 +3,7 @@ import { Geist, Montserrat, Fira_Code } from "next/font/google";
 import { Playfair_Display } from "next/font/google";
 import "./globals.css";
 import Header from "./components/Header";
+import BottomNav from "./components/BottomNav";
 import LenisProvider from "./components/LenisProvider";
 import SystemHUD from "./components/SystemHUD";
 
@@ -85,7 +86,8 @@ export default function RootLayout({
       <body className="bg-black text-[#f0f0f0] antialiased">
         <LenisProvider>
           <Header />
-          <main className="pt-16">{children}</main>
+          <main className="pt-0 md:pt-16 pb-0">{children}</main>
+          <BottomNav />
           <SystemHUD />
         </LenisProvider>
       </body>

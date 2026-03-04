@@ -20,10 +20,10 @@ const CARDS = [
     href: "/work",
     tagline: "Case Studies",
     headline: "Impact at Scale.",
-    body: "Documented systems that moved metrics. Revenue-driven campaigns, brand architectures, and technical builds — all with receipts.",
+    body: "Systems Photography: Capturing the intersection of industrial precision and human performance.",
     stat: { value: "+210%", label: "Avg Volume Increase" },
     accent: "#FFA500",
-    image: "https://res.cloudinary.com/djhqowk67/image/upload/f_auto,q_auto/v1/studio/photography/bio-featured-1",
+    image: "https://res.cloudinary.com/djhqowk67/image/upload/f_auto,q_auto/v1/studio/photography/photography-artifact-60",
   },
   {
     id: "studio",
@@ -36,7 +36,7 @@ const CARDS = [
     body: "Brand systems built for precision and recall. Visual strategy that codes authority into every pixel.",
     stat: { value: "∞", label: "Creative Systems" },
     accent: "#FFA500",
-    image: "https://res.cloudinary.com/djhqowk67/image/upload/f_auto,q_auto/v1/studio/photography/bio-featured-3",
+    image: "https://res.cloudinary.com/djhqowk67/image/upload/f_auto,q_auto/v1/studio/graphic-design/graphic-design-artifact-58",
   },
   {
     id: "piko",
@@ -49,7 +49,7 @@ const CARDS = [
     body: "Sub-5ms latency. PLL beat sync. AudioWorklet threading. A full DJ studio engineered entirely inside a tab — rivaling native desktop performance.",
     stat: { value: "< 5ms", label: "Audio Latency" },
     accent: "#FFA500",
-    image: "https://res.cloudinary.com/djhqowk67/image/upload/f_auto,q_auto/v1/studio/photography/bio-featured-3",
+    image: "https://res.cloudinary.com/djhqowk67/image/upload/f_auto,q_auto/v1/studio/graphic-design/graphic-design-artifact-30",
     isPiko: true,
   },
 ];
@@ -75,7 +75,7 @@ function PikoVisualizer() {
 function ReelCard({ card }: { card: (typeof CARDS)[number] }) {
   return (
     <div
-      className="relative shrink-0 w-screen h-screen flex items-center justify-center overflow-hidden"
+      className="relative shrink-0 w-screen h-screen flex items-center justify-center overflow-hidden ocean-pearl-glass"
       data-reel-card={card.id}
     >
       {/* Background image */}
@@ -240,7 +240,7 @@ export default function TacticalReel() {
   }, []);
 
   return (
-    <div ref={containerRef} className="relative" style={{ height: "100vh" }}>
+    <div ref={containerRef} className="relative" style={{ height: "100vh", touchAction: "pan-y" }}>
       {/* Section label */}
       <div className="absolute top-8 left-6 md:left-12 z-20 flex items-center gap-3">
         <span className="font-mono text-[9px] tracking-[0.35em] text-[#00F2FF]/50 uppercase">
