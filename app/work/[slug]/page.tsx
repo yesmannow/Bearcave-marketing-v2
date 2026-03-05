@@ -202,6 +202,68 @@ const portfolioDB: PortfolioDataStore = {
       builderExternalUrl: "https://piko-artist-website.vercel.app/",
     },
   },
+  "strum-ai": {
+    id: "5",
+    slug: "strum-ai",
+    title: "STRUM AI: Neural Transcription",
+    client: "Independent Artist Series",
+    primaryPillar: "BUILDER",
+    heroImagePrompt:
+      "A high-tech digital guitar pick glowing with neural network pathways, floating in a dark glassmorphic laboratory environment. OKLCH blue and teal accents.",
+    bentoSummary: "Neural-powered chord detection engine with real-time spectral analysis.",
+    sections: {
+      theChallenge: {
+        headline: "The Strategy",
+        strategyNarrative:
+          "Musicians struggle with manual transcription of complex guitar recordings. We aimed to build a professional-grade tool that automates chord detection with >90% accuracy using an ensemble model approach.",
+        metrics: [
+          { label: "Detection Accuracy", value: "92%" },
+          { label: "Processing Speed", value: "Sub-Second" },
+        ],
+        visualPrompt:
+          "A sleek, dark dashboard showing multiple AI models voting on chord segments on a high-resolution audio timeline.",
+      },
+      theBlueprint: {
+        headline: "Neural Architecture",
+        architectureNarrative:
+          "The system leverages an ensemble of three distinct models: HPCP pattern matching, harmonic spectrum analysis, and deep neural inference, coordinated via a weighted voting algorithm.",
+        systemDiagramPrompt:
+          "A cinematic diagram of audio data flowing through a neural 'sorting hat' into specialized detection nodes. Glowing cyan pathways.",
+      },
+      theExecution: {
+        headline: "The Laboratory",
+        deploymentNarrative:
+          "The interface was designed to feel like a scientific lab, utilizing glassmorphic panels and 'Liquid Glow' animations to emphasize the real-time active computation of the AI.",
+        challengesOvercome: [
+          "Optimizing multi-model inference in the browser",
+          "Visualizing complex spectral features without UI lag",
+        ],
+        galleryPrompts: [
+          "A macro shot of a digital waveform being dissected by glowing neural filaments.",
+          "Cinematic view of the 'Neural Pick' logo glowing on a dark glass interface.",
+        ],
+      },
+      theStack: {
+        headline: "Technical Core",
+        infrastructureNarrative:
+          "Built on React 19 and Essentia.js, the app runs entirely on the client-side to ensure maximum privacy and zero latency for high-fidelity audio streams.",
+        technologies: [
+          "React 19",
+          "Essentia.js",
+          "Web Workers",
+          "Tailwind v4",
+          "Framer Motion",
+        ],
+        codeSnippetPrompt:
+          "Close-up of elegant TypeScript code implementing the weighted ensemble voting logic for chord segments.",
+      },
+    },
+    relatedLinks: {
+      technologistSlug: "technology-hub",
+      architectSlug: "architecture-hub",
+      builderExternalUrl: "https://strum-ai.vercel.app/", // Placeholder until user deploys
+    },
+  },
 };
 
 export default async function CaseStudyPage({

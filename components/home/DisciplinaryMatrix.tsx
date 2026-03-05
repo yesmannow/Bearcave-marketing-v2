@@ -47,7 +47,7 @@ const PILLARS: {
       subtitle: "Execution & Deployment",
       description:
         "Getting hands dirty. Relentless execution, shipping products, and turning blueprints into tangible realities.",
-      link: "/work/piko-studio",
+      link: "/work/strum-ai",
       color: "#00FF66", // Green
     },
   ];
