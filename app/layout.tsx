@@ -1,12 +1,17 @@
 import type { Metadata } from "next";
-import { Inter, Montserrat, Fira_Code, Playfair_Display } from "next/font/google";
+import { Geist, Montserrat, Fira_Code } from "next/font/google";
+import { Playfair_Display } from "next/font/google";
 import "./globals.css";
-import SystemWrapper from "./components/SystemWrapper";
+import Header from "./components/Header";
+import BottomNav from "./components/BottomNav";
+import LenisProvider from "./components/LenisProvider";
+import SystemHUD from "./components/SystemHUD";
 
-const interSans = Inter({
-  variable: "--font-geist-sans", // Keeping the variable name to avoid breaking CSS
+const geistSans = Geist({
+  variable: "--font-geist-sans",
   subsets: ["latin"],
   display: "swap",
+  weight: "variable",
   fallback: ["system-ui", "sans-serif"],
 });
 
@@ -36,35 +41,32 @@ const firaCode = Fira_Code({
 });
 
 export const metadata: Metadata = {
-  title: "Jacob Darling | Darling Marketing & Technology",
+  title: "Bearcave — Systems Architect & Marketing Portfolio",
   description:
-    "Jacob Darling is the founder of Darling Marketing & Technology LLC — combining growth marketing strategy with full-stack technical execution across healthcare, e-commerce, SaaS, and more.",
-  keywords: ["marketing consultant", "marketing strategy", "full-stack developer", "growth marketing", "Jacob Darling", "Darling Marketing and Technology"],
+    "Elite 2026 marketing portfolio and systems architecture hub. Executive-level strategy, digital experiences, and technical precision.",
+  keywords: ["systems architect", "marketing portfolio", "digital strategy", "Next.js"],
   openGraph: {
     type: "website",
-    title: "Jacob Darling | Darling Marketing & Technology",
+    title: "Bearcave — Systems Architect & Marketing Portfolio",
     description:
-      "Marketing strategy meets technical execution. Jacob Darling — founder of Darling Marketing & Technology LLC.",
+      "Elite 2026 marketing portfolio and systems architecture hub.",
   },
 };
 
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": ["ProfessionalService", "Person"],
-  name: "Jacob Darling",
+  name: "Bearcave",
   description:
-    "Founder of Darling Marketing & Technology LLC. Combines growth marketing strategy with full-stack technical execution across healthcare, e-commerce, SaaS, music tech, and professional education.",
-  jobTitle: "Marketing Strategist & Full-Stack Developer",
+    "Systems Architect and Marketing Portfolio — elite digital strategy and technical precision.",
+  jobTitle: "Systems Architect",
   url: "https://bearcave.marketing",
   sameAs: [],
   knowsAbout: [
-    "Growth Marketing",
-    "Digital Marketing Strategy",
-    "Full-Stack Web Development",
     "Systems Architecture",
-    "E-Commerce",
-    "SaaS Marketing",
-    "Healthcare Technology",
+    "Digital Marketing Strategy",
+    "Web Development",
+    "Brand Strategy",
   ],
 };
 
@@ -74,17 +76,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${interSans.variable} ${playfair.variable} ${montserrat.variable} ${firaCode.variable}`}>
+    <html lang="en" className={`${geistSans.variable} ${playfair.variable} ${montserrat.variable} ${firaCode.variable}`}>
       <head>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className="bg-black text-[#f0f0f0] antialiased selection:bg-[#FFA500] selection:text-black">
-        <SystemWrapper>
-          {children}
-        </SystemWrapper>
+      <body className="bg-black text-[#f0f0f0] antialiased">
+        <LenisProvider>
+          <Header />
+          <main className="pt-0 md:pt-16 pb-0">{children}</main>
+          <BottomNav />
+          <SystemHUD />
+        </LenisProvider>
       </body>
     </html>
   );

@@ -2,10 +2,8 @@
 
 import { useRef, useMemo, useEffect } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Environment } from "@react-three/drei";
-import { EffectComposer, Bloom } from "@react-three/postprocessing";
+import { MeshTransmissionMaterial, Float, Environment } from "@react-three/drei";
 import * as THREE from "three";
-import NeuralMonolith from "../../components/home/NeuralMonolith";
 
 // ── Gravity Ripple Grid ────────────────────────────────────────────────────
 
@@ -72,7 +70,66 @@ function GravityGrid() {
   );
 }
 
-// ── Floating Asset Extracted to NeuralMonolith.tsx ────────────────────────
+// ── Floating Glass Geometry ────────────────────────────────────────────────
+
+function FloatingAsset() {
+  const groupRef = useRef<THREE.Group>(null);
+  const innerRef = useRef<THREE.Mesh>(null);
+
+  useFrame(({ clock }) => {
+    const t = clock.getElapsedTime();
+    if (groupRef.current) {
+      groupRef.current.rotation.y = t * 0.18;
+      groupRef.current.rotation.x = Math.sin(t * 0.3) * 0.12;
+      groupRef.current.position.y = Math.sin(t * 0.5) * 0.15;
+    }
+    if (innerRef.current) {
+      innerRef.current.rotation.z = t * 0.25;
+    }
+  });
+
+  return (
+    <Float speed={1.2} rotationIntensity={0.2} floatIntensity={0.4}>
+      <group ref={groupRef}>
+        {/* Outer glass icosahedron */}
+        <mesh>
+          <icosahedronGeometry args={[1.0, 1]} />
+          <MeshTransmissionMaterial
+            backside
+            samples={6}
+            resolution={256}
+            transmission={0.95}
+            roughness={0.05}
+            thickness={0.4}
+            ior={1.45}
+            chromaticAberration={0.08}
+            color="#00F2FF"
+            distortionScale={0.15}
+            temporalDistortion={0.1}
+          />
+        </mesh>
+
+        {/* Inner solid — glowing core */}
+        <mesh ref={innerRef} scale={0.42}>
+          <octahedronGeometry args={[1, 0]} />
+          <meshStandardMaterial
+            color="#00F2FF"
+            emissive="#00F2FF"
+            emissiveIntensity={2.2}
+            roughness={0.1}
+            metalness={0.6}
+          />
+        </mesh>
+
+        {/* Orbit ring */}
+        <mesh rotation={[Math.PI / 2.6, 0, 0]}>
+          <torusGeometry args={[1.55, 0.012, 8, 64]} />
+          <meshBasicMaterial color="#00F2FF" transparent opacity={0.25} />
+        </mesh>
+      </group>
+    </Float>
+  );
+}
 
 // ── Particle Field ─────────────────────────────────────────────────────────
 
@@ -121,11 +178,8 @@ function Scene() {
       <pointLight position={[-4, -2, -4]} intensity={0.6} color="#0044ff" />
       <Environment preset="night" />
       <GravityGrid />
-      <NeuralMonolith />
+      <FloatingAsset />
       <ParticleField />
-      <EffectComposer>
-        <Bloom luminanceThreshold={1} mipmapBlur intensity={1.5} />
-      </EffectComposer>
     </>
   );
 }
