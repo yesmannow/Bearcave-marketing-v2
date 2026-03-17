@@ -3,13 +3,14 @@
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Home, Briefcase, FileText, Beaker, Mail } from "lucide-react";
+import { Home, Briefcase, FileText, Beaker, Camera, Mail } from "lucide-react";
 
 const NAV_ITEMS = [
   { label: "Home", href: "/", Icon: Home },
   { label: "Work", href: "/work", Icon: Briefcase },
   { label: "My Story", href: "/resume", Icon: FileText },
   { label: "Labs", href: "/lab", Icon: Beaker },
+  { label: "Studio", href: "/studio", Icon: Camera },
   { label: "Let's Connect", href: "/#contact", Icon: Mail },
 ];
 
