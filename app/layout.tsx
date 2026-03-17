@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Montserrat, Fira_Code } from "next/font/google";
+import { Geist, Inter, Montserrat, Fira_Code } from "next/font/google";
 import { Playfair_Display } from "next/font/google";
 import "./globals.css";
 import Header from "./components/Header";
@@ -24,6 +24,14 @@ const playfair = Playfair_Display({
   fallback: ["Georgia", "serif"],
 });
 
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+  display: "swap",
+  weight: "variable",
+  fallback: ["system-ui", "sans-serif"],
+});
+
 const montserrat = Montserrat({
   variable: "--font-montserrat",
   subsets: ["latin"],
@@ -33,7 +41,7 @@ const montserrat = Montserrat({
 });
 
 const firaCode = Fira_Code({
-  variable: "--font-fira-code",
+  variable: "--font-fira",
   subsets: ["latin"],
   display: "swap",
   weight: ["400", "500", "600"],
@@ -76,7 +84,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${playfair.variable} ${montserrat.variable} ${firaCode.variable}`}>
+    <html lang="en" className={`${geistSans.variable} ${playfair.variable} ${inter.variable} ${montserrat.variable} ${firaCode.variable}`}>
       <head>
         <script
           type="application/ld+json"

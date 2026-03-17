@@ -17,8 +17,13 @@
   --color-accent-dim: var(--accent-dim);
   --color-muted: var(--muted);
   --color-border: var(--border);
-  --font-sans: var(--font-geist-sans);
+  --color-brand-dark: #0f172a;
+  --color-brand-teal: #40E0D0;
+  --color-brand-orange: #FFA500;
+  --font-sans: var(--font-inter);
   --font-serif: var(--font-playfair);
+  --font-display: var(--font-montserrat);
+  --font-mono: var(--font-fira);
 }
 
 html {

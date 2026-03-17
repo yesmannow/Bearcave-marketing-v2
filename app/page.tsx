@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import SystemBoot from "./components/SystemBoot";
-import Hero3D from "./components/Hero3D";
+import Hero from "./components/Hero";
 import TacticalReel from "./components/TacticalReel";
 import PikoLabBlock from "./components/PikoLabBlock";
 
@@ -23,8 +23,8 @@ export default function HomePage() {
           transition: "opacity 0.8s ease 0.1s",
         }}
       >
-        {/* ── ACT I: Spatial Uplink Hero ─────────────────────────────────── */}
-        <Hero3D />
+        {/* ── ACT I: Architect's Command Center Hero ─────────────────────── */}
+        <Hero />
 
         {/* ── ACT II: Tactical Reel (GSAP Horizontal Scroll) ─────────────── */}
         <TacticalReel />
