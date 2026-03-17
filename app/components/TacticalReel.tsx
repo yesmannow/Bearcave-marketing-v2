@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Zap, Camera, Radio } from "lucide-react";
+import { ArrowRight, Camera, FlaskConical, User } from "lucide-react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -13,62 +13,48 @@ gsap.registerPlugin(ScrollTrigger);
 
 const CARDS = [
   {
-    id: "proof",
+    id: "my-story",
     index: "01",
-    label: "Proof",
-    Icon: Zap,
-    href: "/work",
-    tagline: "Case Studies",
-    headline: "Impact at Scale.",
-    body: "Systems Photography: Capturing the intersection of industrial precision and human performance.",
-    stat: { value: "+210%", label: "Avg Volume Increase" },
-    accent: "#FFA500",
-    image: "https://res.cloudinary.com/djhqowk67/image/upload/f_auto,q_auto/v1/studio/photography/photography-artifact-60",
+    label: "My Story",
+    Icon: User,
+    href: "/resume",
+    cta: "Read My Story",
+    tagline: "Professional Resume",
+    headline: "Strategy.\nSystems.\nExecution.",
+    body: "Marketing strategist and systems architect with 15+ years building revenue-driving infrastructure — bridging vision and implementation with measurable ROI.",
+    stat: { value: "15+ Years", label: "Experience" },
+    accent: "#00F2FF",
+    image: "https://res.cloudinary.com/djhqowk67/image/upload/f_auto,q_auto/v1/studio/photography/photography-artifact-45",
+  },
+  {
+    id: "labs",
+    index: "02",
+    label: "Labs",
+    Icon: FlaskConical,
+    href: "/lab",
+    cta: "Enter Labs",
+    tagline: "Interactive Lab",
+    headline: "The Maker\nEvolution.",
+    body: "A categorized systems lab spanning strategy, full-stack execution, and deep infrastructure — built to test ideas fast and ship what works.",
+    stat: { value: "Live", label: "Experiments" },
+    accent: "#40E0D0",
+    image: "https://res.cloudinary.com/djhqowk67/image/upload/f_auto,q_auto/v1/studio/proof/piko-project/dj-studio-mixer/artifact-23",
   },
   {
     id: "studio",
-    index: "02",
+    index: "03",
     label: "Studio",
     Icon: Camera,
     href: "/studio",
-    tagline: "Visual Identity",
-    headline: "Identity Engineered.",
-    body: "Brand systems built for precision and recall. Visual strategy that codes authority into every pixel.",
-    stat: { value: "∞", label: "Creative Systems" },
-    accent: "#FFA500",
-    image: "https://res.cloudinary.com/djhqowk67/image/upload/f_auto,q_auto/v1/studio/graphic-design/graphic-design-artifact-58",
-  },
-  {
-    id: "piko",
-    index: "03",
-    label: "The Piko Project",
-    Icon: Radio,
-    href: "/work/piko-project",
-    tagline: "System Takeover",
-    headline: "Browser-Native\nAudio Workstation.",
-    body: "Sub-5ms latency. PLL beat sync. AudioWorklet threading. A full DJ studio engineered entirely inside a tab — rivaling native desktop performance.",
-    stat: { value: "< 5ms", label: "Audio Latency" },
-    accent: "#FFA500",
-    image: "https://res.cloudinary.com/djhqowk67/image/upload/f_auto,q_auto/v1/studio/graphic-design/graphic-design-artifact-30",
-    isPiko: true,
+    cta: "Explore Studio",
+    tagline: "Visual Uplink",
+    headline: "Systems Architecture\nThrough Execution.",
+    body: "An artifact gallery of photography, design, and technical proof — showing how strategy becomes a visual system that performs in the real world.",
+    stat: { value: "3 Lenses", label: "Photography · Design · Proof" },
+    accent: "#40E0D0",
+    image: "https://res.cloudinary.com/djhqowk67/image/upload/f_auto,q_auto/v1/studio/graphic-design/graphic-design-artifact-03",
   },
 ];
-
-// ── Piko Visualizer ────────────────────────────────────────────────────────
-
-function PikoVisualizer() {
-  return (
-    <div
-      className="flex items-center gap-1"
-      style={{ height: "48px" }}
-    >
-      <div className="w-12 h-px bg-[#40E0D0]/50" />
-      <div className="w-2 h-2 rounded-full bg-[#40E0D0] animate-pulse" style={{ boxShadow: "0 0 12px #40E0D044" }} />
-      <div className="w-12 h-px bg-[#40E0D0]/50" />
-      <span className="ml-2 font-mono text-[9px] text-[#40E0D0] tracking-widest uppercase">SYNC_LOCKED</span>
-    </div>
-  );
-}
 
 // ── Single Card ────────────────────────────────────────────────────────────
 
@@ -81,7 +67,7 @@ function ReelCard({ card }: { card: (typeof CARDS)[number] }) {
       {/* Background image */}
       <div
         className="absolute inset-0"
-        style={{ filter: card.isPiko ? "brightness(0.35) saturate(1.4)" : "brightness(0.22) grayscale(0.3)" }}
+        style={{ filter: "brightness(0.5) saturate(1.12)" }}
       >
         <Image
           src={card.image}
@@ -92,16 +78,15 @@ function ReelCard({ card }: { card: (typeof CARDS)[number] }) {
         />
       </div>
 
-      {/* Piko: cyan grid overlay */}
-      {card.isPiko && (
-        <div
-          className="absolute inset-0 pointer-events-none opacity-[0.06]"
-          style={{
-            backgroundImage: `linear-gradient(#00D4FF 1px, transparent 1px), linear-gradient(90deg, #00D4FF 1px, transparent 1px)`,
-            backgroundSize: "60px 60px",
-          }}
-        />
-      )}
+      {/* Dark readability overlays */}
+      <div className="absolute inset-0 bg-black/42 pointer-events-none" />
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            "linear-gradient(90deg, rgba(0,0,0,0.60) 0%, rgba(0,0,0,0.40) 45%, rgba(0,0,0,0.50) 100%)",
+        }}
+      />
 
       {/* Radial darkening vignette */}
       <div
@@ -146,9 +131,6 @@ function ReelCard({ card }: { card: (typeof CARDS)[number] }) {
           {card.body}
         </p>
 
-        {/* Piko visualizer */}
-        {card.isPiko && <PikoVisualizer />}
-
         {/* Stat */}
         <div className="flex items-end gap-4">
           <div>
@@ -174,7 +156,7 @@ function ReelCard({ card }: { card: (typeof CARDS)[number] }) {
             boxShadow: `0 0 12px ${card.accent}22`,
           }}
         >
-          {card.isPiko ? "Enter Workstation" : `Explore ${card.label}`}
+          {card.cta}
           <ArrowRight size={12} className="transition-transform group-hover:translate-x-1" />
         </Link>
       </div>
@@ -197,21 +179,27 @@ function ReelCard({ card }: { card: (typeof CARDS)[number] }) {
 export default function TacticalReel() {
   const containerRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
+  const [activeIdx, setActiveIdx] = useState(0);
 
   useEffect(() => {
     const container = containerRef.current;
     const track = trackRef.current;
     if (!container || !track) return;
 
+    // Fast Refresh / StrictMode can remount and attempt cleanup twice.
+    // Use a stable id so we can kill any existing instance safely.
+    ScrollTrigger.getById("tactical-reel")?.kill(true);
+
     const ctx = gsap.context(() => {
       // Defer measurement until effect runs to avoid hydration mismatch
       const totalWidth = track.scrollWidth;
       const scrollDistance = totalWidth - window.innerWidth;
 
-      gsap.to(track, {
+      const tween = gsap.to(track, {
         x: -scrollDistance,
         ease: "none",
         scrollTrigger: {
+          id: "tactical-reel",
           trigger: container,
           start: "top top",
           end: () => `+=${scrollDistance}`,
@@ -226,17 +214,22 @@ export default function TacticalReel() {
               Math.floor(progress * cardCount),
               cardCount - 1
             );
-            window.dispatchEvent(
-              new CustomEvent("reel-card-change", {
-                detail: { label: CARDS[activeIdx].label },
-              })
-            );
+            setActiveIdx(activeIdx);
           },
         },
       });
+
+      // Ensure ScrollTrigger knows about layout changes.
+      // (Prevents edge cases where pin-spacer removal can desync.)
+      tween.scrollTrigger?.refresh();
     }, container);
 
-    return () => ctx.revert();
+    return () => {
+      // Kill our trigger first, then revert GSAP context.
+      // The kill(true) ensures pinned spacer cleanup is handled by ScrollTrigger.
+      ScrollTrigger.getById("tactical-reel")?.kill(true);
+      ctx.revert();
+    };
   }, []);
 
   return (
@@ -270,8 +263,8 @@ export default function TacticalReel() {
             key={card.id}
             className="w-1.5 h-1.5 rounded-full"
             style={{
-              background: i === 0 ? "#00F2FF" : "#333",
-              boxShadow: i === 0 ? "0 0 6px #00F2FF" : "none",
+              background: i === activeIdx ? "#00F2FF" : "#333",
+              boxShadow: i === activeIdx ? "0 0 6px #00F2FF" : "none",
             }}
           />
         ))}

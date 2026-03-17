@@ -233,9 +233,9 @@ export default function WorkLens() {
 
   return (
     <div ref={containerRef} className="min-h-screen px-6 md:px-12 py-16 relative overflow-hidden">
-      {/* Parallax Bio Background — bio-featured-4, 5% opacity, masked at edges */}
+      {/* Parallax background — 5% opacity, masked at edges */}
       <motion.div
-        className="fixed inset-0 z-0 pointer-events-none opacity-5 mix-blend-screen grayscale"
+        className="fixed inset-0 z-0 pointer-events-none opacity-20 mix-blend-screen grayscale"
         style={{
           y,
           maskImage: "radial-gradient(ellipse 80% 60% at 50% 40%, black 30%, transparent 80%)",
@@ -243,8 +243,8 @@ export default function WorkLens() {
         }}
       >
         <Image
-          src="https://res.cloudinary.com/djhqowk67/image/upload/f_auto,q_auto/v1/studio/photography/bio-featured-4"
-          alt="Systems Architect Identity"
+          src="https://res.cloudinary.com/djhqowk67/image/upload/f_auto,q_auto/v1/studio/graphic-design/graphic-design-artifact-51"
+          alt="Work background"
           fill
           className="object-cover object-top"
           sizes="100vw"
@@ -254,12 +254,14 @@ export default function WorkLens() {
       {/* Header */}
       <div className="mb-12 relative z-10">
         <p className="text-[#00F2FF] text-xs tracking-[0.3em] uppercase mb-4">
-          Proof of Work
+          Work Experience
         </p>
         <h1 className="font-serif text-4xl md:text-6xl font-black">
-          Results, Not
+          Helping brands grow
           <br />
-          Rhetoric.
+          by connecting strategy, design,
+          <br />
+          systems, and execution.
         </h1>
       </div>
 
@@ -311,7 +313,7 @@ export default function WorkLens() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -12 }}
           transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-          className="flex flex-col gap-px bg-[#1f1f1f]"
+          className="grid grid-cols-1 md:grid-cols-2 gap-6"
         >
           {config.projects.map(
             ({ id, title, client, year, tags, logoUrl, roi, roiLabel, techStack, techHighlight, techHighlightLabel }) => {
@@ -322,7 +324,7 @@ export default function WorkLens() {
                 <Link
                   key={id}
                   href={`/work/${id}`}
-                  className="group bg-black px-8 py-10 grid grid-cols-1 md:grid-cols-[1fr_auto] gap-6 items-center hover:bg-[#0a0a0a] transition-colors"
+                  className="group bg-black px-8 py-10 grid grid-cols-1 md:grid-cols-[1fr_auto] gap-6 items-center hover:bg-[#0a0a0a] transition-colors border border-[#1f1f1f]"
                 >
                   <div>
                     {logoUrl && (

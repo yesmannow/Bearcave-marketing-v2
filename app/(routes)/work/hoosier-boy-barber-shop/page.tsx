@@ -144,9 +144,11 @@ export default function HoosierBoyBarbershopPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  const heroImage = assets?.hero[0] ?? null;
-  // Second hero or first gallery asset = environmental interior shot
-  const envImage = assets?.hero[1] ?? assets?.gallery[0] ?? null;
+  // Prefer categorized hero assets; fall back to gallery so the page still shows
+  // project-specific imagery even if manifest patterns don't match filenames yet.
+  const heroImage = assets?.hero[0] ?? assets?.gallery[0] ?? null;
+  // Second hero or next gallery asset = environmental interior shot
+  const envImage = assets?.hero[1] ?? assets?.gallery[1] ?? assets?.gallery[0] ?? null;
   const logoAsset = assets?.branding[0] ?? null;
   const bcardAsset = assets?.branding.find(b =>
     b.public_id.toLowerCase().includes("bcard") ||
@@ -537,7 +539,7 @@ export default function HoosierBoyBarbershopPage() {
       </section>
 
       {/* ── ACT IV: PROOF ARCHIVE ────────────────────────────────────────── */}
-      {(loading || galleryAssets.length > 1) && (
+      {(loading || galleryAssets.length > 0) && (
         <section className="px-6 md:px-12 py-24">
           <div className="flex items-center gap-4 mb-12">
             <TrendingUp size={16} style={{ color: CRIMSON }} />
@@ -555,7 +557,7 @@ export default function HoosierBoyBarbershopPage() {
             </div>
           ) : (
             <div className="columns-1 md:columns-2 lg:columns-3 gap-6">
-              {galleryAssets.slice(1).map((resource, i) => {
+              {galleryAssets.map((resource, i) => {
                 const ar = resource.width && resource.height ? resource.width / resource.height : 4 / 3;
                 return (
                   <motion.div

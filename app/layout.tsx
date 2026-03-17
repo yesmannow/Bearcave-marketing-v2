@@ -5,7 +5,6 @@ import "./globals.css";
 import Header from "./components/Header";
 import BottomNav from "./components/BottomNav";
 import LenisProvider from "./components/LenisProvider";
-import SystemHUD from "./components/SystemHUD";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -96,7 +95,6 @@ export default function RootLayout({
           <Header />
           <main className="pt-0 md:pt-16 pb-0">{children}</main>
           <BottomNav />
-          <SystemHUD />
         </LenisProvider>
       </body>
     </html>
