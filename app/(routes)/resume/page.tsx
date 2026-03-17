@@ -20,7 +20,7 @@ import Image from "next/image";
 
 function Hero() {
   return (
-    <section className="px-6 md:px-12 py-16 md:py-24 border-b border-[#1f1f1f] relative overflow-hidden">
+    <section className="px-6 md:px-12 py-16 md:py-24 border-b border-[#1f1f1f] relative overflow-hidden bg-[#2a3f63]">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start justify-between gap-12 md:gap-20">
         <div className="flex-1">
           <div className="flex items-center justify-between mb-6">
@@ -94,21 +94,24 @@ function Hero() {
             <div className="absolute right-0 top-1/2 w-2 h-2 bg-[#00F2FF] rounded-full translate-x-1/2 -translate-y-1/2 shadow-[0_0_10px_#00F2FF]" />
           </div>
 
-          <div className="flex flex-col items-center text-center mt-2 max-w-[280px]">
-            <Image
-              src="/images/Indiana_University_logotype.svg.png"
-              alt="Indiana University"
-              width={180}
-              height={60}
-              className="mb-4 opacity-90 object-contain"
-            />
-            <p className="text-[10px] tracking-[0.2em] text-[#555] uppercase font-mono mb-2">
-              Bloomington · IN · Aug 2004 — May 2008
-            </p>
-            <p className="text-sm font-semibold text-[#EDEDED] mb-1">
+          <div className="flex flex-col items-center text-center mt-2 max-w-[320px]">
+            <div className="w-full flex justify-center mb-5">
+              <Image
+                src="/images/Indiana_University_logotype.svg.png"
+                alt="Indiana University"
+                width={220}
+                height={74}
+                className="opacity-95 object-contain block"
+              />
+            </div>
+            <div className="text-xs tracking-[0.14em] text-[#8a8a8a] uppercase font-mono mb-2 leading-relaxed">
+              <p>Bloomington · IN</p>
+              <p>Aug 2004 — May 2008</p>
+            </div>
+            <p className="text-lg font-semibold text-[#EDEDED] mb-1">
               Bachelor of Science
             </p>
-            <p className="text-xs text-[#a0a0a0]">
+            <p className="text-sm text-[#c5c5c5]">
               Business Management
             </p>
           </div>

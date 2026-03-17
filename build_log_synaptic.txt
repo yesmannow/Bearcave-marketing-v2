@@ -1,0 +1,46 @@
+
+> bearcave@0.1.0 build
+> next build --webpack
+
+▲ Next.js 16.1.6 (webpack)
+- Environments: .env.local
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 17.7s
+  Running TypeScript ...
+  Collecting page data using 15 workers ...
+  Generating static pages using 15 workers (0/19) ...
+  Generating static pages using 15 workers (4/19) 
+  Generating static pages using 15 workers (9/19) 
+  Generating static pages using 15 workers (14/19) 
+✓ Generating static pages using 15 workers (19/19) in 1038.4ms
+  Finalizing page optimization ...
+  Collecting build traces ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /api/gallery
+├ ƒ /api/gallery/project/[slug]
+├ ƒ /api/identity
+├ ○ /lab
+├ ƒ /lab/[id]
+├ ○ /resume
+├ ○ /studio
+├ ○ /work
+├ ƒ /work/[id]
+├ ○ /work/317-bbq
+├ ○ /work/behr-pet-essentials
+├ ○ /work/circle-city-kicks
+├ ○ /work/clean-aesthetics
+├ ○ /work/hoosier-boy-barber-shop
+├ ○ /work/piko-project
+├ ○ /work/primary-care-indy
+├ ○ /work/riley-bennett-egloff
+├ ○ /work/taco-ninja
+└ ○ /work/tuohy-bailey-moore
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
