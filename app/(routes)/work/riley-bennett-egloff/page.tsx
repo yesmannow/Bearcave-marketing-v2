@@ -1,12 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, BarChart2, FileText, TrendingUp, ExternalLink } from "lucide-react";
 import type { MixedMediaResource } from "@/app/types/cloudinary";
-import type { ProjectAssets, ProjectResponse } from "@/app/api/gallery/project/[slug]/route";
+import { useProjectAssets } from "@/app/hooks/useProjectAssets";
 
 const RBE_METRICS = [
   { label: "Organic Traffic", value: "+189%" },
@@ -124,20 +123,7 @@ function PublicationCard({ resource, index }: { resource: MixedMediaResource; in
 }
 
 export default function RileyBennettEgloffPage() {
-  const [assets, setAssets] = useState<ProjectAssets | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetch("/api/gallery/project/riley-bennett-egloff")
-      .then((r) => r.json())
-      .then((data: ProjectResponse) => {
-        if (data.success) setAssets(data.assets);
-        else setError("Failed to load project assets.");
-      })
-      .catch(() => setError("Network error loading assets."))
-      .finally(() => setLoading(false));
-  }, []);
+  const { assets, loading, error } = useProjectAssets("riley-bennett-egloff");
 
   const heroImage = assets?.hero[0] ?? assets?.gallery[0] ?? null;
   const statAssets = assets?.stats ?? [];

@@ -1,12 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { ArrowLeft, Feather, Layers, Type, Flower2 } from "lucide-react";
 import type { MixedMediaResource } from "@/app/types/cloudinary";
-import type { ProjectAssets, ProjectResponse } from "@/app/api/gallery/project/[slug]/route";
+import { useProjectAssets } from "@/app/hooks/useProjectAssets";
 
 const LILAC = "#C8A2C8";
 
@@ -147,20 +146,7 @@ function VariantCard({
 }
 
 export default function CleanAestheticsPage() {
-  const [assets, setAssets] = useState<ProjectAssets | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetch("/api/gallery/project/clean-aesthetics")
-      .then((r) => r.json())
-      .then((data: ProjectResponse) => {
-        if (data.success) setAssets(data.assets);
-        else setError("Failed to load project assets.");
-      })
-      .catch(() => setError("Network error loading assets."))
-      .finally(() => setLoading(false));
-  }, []);
+  const { assets, loading, error } = useProjectAssets("clean-aesthetics");
 
   const heroAsset = assets?.hero[0] ?? assets?.branding[0] ?? null;
   const brandingAssets = assets?.branding ?? [];

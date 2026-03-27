@@ -92,11 +92,6 @@ function generateCleanName(
   return `${folder}/${category}-${prefix}-${paddedIndex}`;
 }
 
-interface TagOperation {
-  publicId: string;
-  tags: string[];
-}
-
 async function scanFolder(folderPath: string): Promise<RenameOperation[]> {
   console.log(`\n🔍 Scanning folder: ${folderPath}`);
 

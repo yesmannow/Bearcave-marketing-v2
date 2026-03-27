@@ -12,21 +12,19 @@ type Props = {
 
 function useSlidesPerView() {
   const compute = () => {
-    if (typeof window === "undefined") return 1;
     const w = window.innerWidth;
     if (w >= 1024) return 4;
     if (w >= 768) return 2;
     return 1;
   };
 
-  const [slidesPerView, setSlidesPerView] = useState<number>(() => compute());
+  const [slidesPerView, setSlidesPerView] = useState<number>(1);
 
   useEffect(() => {
     const onResize = () => setSlidesPerView(compute());
-    const t = window.setTimeout(onResize, 0);
+    onResize();
     window.addEventListener("resize", onResize);
     return () => {
-      window.clearTimeout(t);
       window.removeEventListener("resize", onResize);
     };
   }, []);
@@ -234,4 +232,3 @@ export default function PeerEndorsementsCarousel({
     </div>
   );
 }
-

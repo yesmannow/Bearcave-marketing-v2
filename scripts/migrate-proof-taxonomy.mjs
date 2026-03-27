@@ -179,7 +179,11 @@ async function main() {
     }
 
     const result = await renameAsset(oldId, newId, slug);
-    result.ok ? passed++ : failed++;
+    if (result.ok) {
+      passed++;
+    } else {
+      failed++;
+    }
   }
 
   // ── Phase 3: Stat asset renames (full public_id paths) ──
@@ -200,7 +204,11 @@ async function main() {
     }
 
     const result = await renameAsset(oldId, newId, 'STAT');
-    result.ok ? passed++ : failed++;
+    if (result.ok) {
+      passed++;
+    } else {
+      failed++;
+    }
   }
 
   // ── Phase 2: Root legacy renames ──
@@ -221,7 +229,11 @@ async function main() {
     }
 
     const result = await renameAsset(oldId, newId, 'ROOT→LEGACY');
-    result.ok ? passed++ : failed++;
+    if (result.ok) {
+      passed++;
+    } else {
+      failed++;
+    }
   }
 
   console.log(`\n─── Summary ───`);

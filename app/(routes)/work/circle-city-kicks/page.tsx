@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ChevronLeft, ChevronRight, Layers, Quote, Shuffle } from "lucide-react";
 import type { MixedMediaResource } from "@/app/types/cloudinary";
-import type { ProjectAssets, ProjectResponse } from "@/app/api/gallery/project/[slug]/route";
+import { useProjectAssets } from "@/app/hooks/useProjectAssets";
 
 const CRIMSON = "#E63946";
 
@@ -160,20 +160,7 @@ function IterationSlider({ items }: { items: MixedMediaResource[] }) {
 }
 
 export default function CircleCityKicksPage() {
-  const [assets, setAssets] = useState<ProjectAssets | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetch("/api/gallery/project/circle-city-kicks")
-      .then((r) => r.json())
-      .then((data: ProjectResponse) => {
-        if (data.success) setAssets(data.assets);
-        else setError("Failed to load project assets.");
-      })
-      .catch(() => setError("Network error loading assets."))
-      .finally(() => setLoading(false));
-  }, []);
+  const { assets, loading, error } = useProjectAssets("circle-city-kicks");
 
   const draftHero = assets?.process[0] ?? null;
   const finalHero = assets?.branding[0] ?? null;

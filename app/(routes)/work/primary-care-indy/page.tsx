@@ -1,12 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { ArrowLeft, Stethoscope, Layers, Monitor, FileText } from "lucide-react";
 import type { MixedMediaResource } from "@/app/types/cloudinary";
-import type { ProjectAssets, ProjectResponse } from "@/app/api/gallery/project/[slug]/route";
+import { useProjectAssets } from "@/app/hooks/useProjectAssets";
 
 const BLUE = "#0077B6";
 const TEAL = "#40E0D0";
@@ -142,20 +141,7 @@ function KeyboardMetaphor({ resource }: { resource: MixedMediaResource }) {
 }
 
 export default function PrimaryCareIndyPage() {
-  const [assets, setAssets] = useState<ProjectAssets | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetch("/api/gallery/project/primarycare-indy")
-      .then((r) => r.json())
-      .then((data: ProjectResponse) => {
-        if (data.success) setAssets(data.assets);
-        else setError("Failed to load project assets.");
-      })
-      .catch(() => setError("Network error loading assets."))
-      .finally(() => setLoading(false));
-  }, []);
+  const { assets, loading, error } = useProjectAssets("primarycare-indy");
 
   const heroImage = assets?.hero[0] ?? null;
   const brandingAssets = assets?.branding ?? [];

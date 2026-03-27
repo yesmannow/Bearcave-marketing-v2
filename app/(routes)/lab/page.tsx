@@ -61,18 +61,26 @@ function LabToggle({
 const ECG: number[] = [2, 3, 2, 10, 16, 3, 2, 4];
 
 function SystemPulse({ accentColor }: { accentColor: string }) {
-  const [online, setOnline] = useState(() =>
-    typeof navigator !== "undefined" ? navigator.onLine : true
-  );
+  const [online, setOnline] = useState(true);
   const [expanded, setExpanded] = useState(false);
   const [tick, setTick] = useState(0);
-  const [effectiveType] = useState<string | null>(() => {
-    if (typeof navigator === "undefined") return null;
-    const conn = (navigator as unknown as { connection?: { effectiveType?: string } }).connection;
-    return conn?.effectiveType ?? null;
-  });
+  const [effectiveType, setEffectiveType] = useState<string | null>(null);
 
   useEffect(() => {
+    const conn =
+      typeof navigator !== "undefined"
+        ? (navigator as unknown as {
+            connection?: {
+              effectiveType?: string;
+              addEventListener?: (event: "change", cb: () => void) => void;
+              removeEventListener?: (event: "change", cb: () => void) => void;
+            };
+          }).connection
+        : undefined;
+
+    const onConnectionChange = () => setEffectiveType(conn?.effectiveType ?? null);
+    conn?.addEventListener?.("change", onConnectionChange);
+
     const onOnline = () => setOnline(true);
     const onOffline = () => setOnline(false);
     window.addEventListener("online", onOnline);
@@ -81,6 +89,7 @@ function SystemPulse({ accentColor }: { accentColor: string }) {
     const id = window.setInterval(() => setTick((t) => t + 1), 900);
 
     return () => {
+      conn?.removeEventListener?.("change", onConnectionChange);
       window.removeEventListener("online", onOnline);
       window.removeEventListener("offline", onOffline);
       window.clearInterval(id);

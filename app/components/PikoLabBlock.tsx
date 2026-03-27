@@ -119,6 +119,7 @@ function WasmVisualizer() {
       const dpr = typeof window !== 'undefined' ? window.devicePixelRatio : 1;
       canvas.width = canvas.offsetWidth * dpr;
       canvas.height = canvas.offsetHeight * dpr;
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.scale(dpr, dpr);
     };
 
